@@ -1,0 +1,3 @@
+/Users/mikeyang/pCloud Drive/cmu/courses/Secure Computer Systems /lab/lab1/lab1_15793/cmake-build-debug/CMakeFiles/lab1_15793.dir
+/Users/mikeyang/pCloud Drive/cmu/courses/Secure Computer Systems /lab/lab1/lab1_15793/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/mikeyang/pCloud Drive/cmu/courses/Secure Computer Systems /lab/lab1/lab1_15793/cmake-build-debug/CMakeFiles/rebuild_cache.dir
