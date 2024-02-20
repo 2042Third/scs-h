@@ -6,3 +6,5 @@
 *.iml
 out
 gen
+!/cmake-build-debug-wsl/
+!/cmake-build-release-wsl/
