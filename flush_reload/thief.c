@@ -20,7 +20,19 @@
 // you can traverse the buffer and use the utility functions
 // to flush lines and perform the reload step.
 int flush_reload(int size, uint8_t *buf) {
-    
+  uint64_t addr = (uint64_t) buf;
+
+  for (int i = 0; i < L2_WAYS; i++) {
+    // Set the first byte of each line to 1
+    uint64_t lineAddr = addr + i * L2_LINE_SIZE;
+//    (*((char *)lineAddr)) ++;
+    clflush(lineAddr);
+    uint32_t timing = measure_line_access_time(lineAddr);
+    if (timing > 0 ) {
+        printf("Address = %ld, set %d  timing = %d\n",lineAddr ,i, timing);
+//      found = true;
+    }
+  }
 }
 
 int main(int argc, char const *argv[]) {
