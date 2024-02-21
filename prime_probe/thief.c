@@ -26,7 +26,7 @@ bool prime_probe_l2_set(int set, char *buf) {
     for (int i = 0; i < L2_WAYS; i++) {
       // Set the first byte of each line to 1
       uint64_t lineAddr = addr + i * L2_LINE_SIZE;
-      *((char *)lineAddr) = 1;
+      (*((char *)lineAddr)) ++;
       uint32_t timing = measure_line_access_time(lineAddr);
       if (timing > 30 ) {
 //        printf("Address = %ld, set %d  timing = %d\n",lineAddr ,set, timing);
