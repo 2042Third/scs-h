@@ -15,6 +15,7 @@
 
 #define SHARED_ID "CHANNEL"
 
+#define BUF_LINES (4096 * 511)/64
 
 // flush and reload should be straight forward
 // you can traverse the buffer and use the utility functions
@@ -22,7 +23,7 @@
 int flush_reload(int size, uint8_t *buf) {
   uint64_t addr = (uint64_t) buf;
 
-  for (int i = 0; i < L2_WAYS; i++) {
+  for (int i = 0; i < BUF_LINES; i++) {
     // Set the first byte of each line to 1
     uint64_t lineAddr = addr + i * L2_LINE_SIZE;
 //    (*((char *)lineAddr)) ++;
