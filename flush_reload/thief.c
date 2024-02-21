@@ -30,7 +30,7 @@ int flush_reload(int size, uint8_t *buf) {
     clflush(lineAddr);
     uint32_t timing = measure_line_access_time(lineAddr);
     if (timing > 0 ) {
-        printf("Address = %ld, set %d  timing = %d\n",lineAddr ,i, timing);
+        printf("Address = %ld, set %d  timing = %d\n",lineAddr *64,i, timing);
 //      found = true;
     }
   }
