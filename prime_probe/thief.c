@@ -72,7 +72,7 @@ bool prime_probe_l2_set(int set, char *buf) {
       printf("Address = %ld, set %d  timing = %d\n", lineAddr, set, timing);
     }
 
-    if(timing > 30){
+    if(timing > 32){
       found = true;
     }
   }
@@ -95,7 +95,7 @@ int main(int argc, char const *argv[]) {
         evict_count[i] = 0;
     }
 
-    int num_reps = 10;
+    int num_reps = 1000;
     for (int rep = 0; rep < num_reps; rep++) {
         for (int set = 0; set < L2_SETS; set++) {
             if (prime_probe_l2_set(set, buf)) {
