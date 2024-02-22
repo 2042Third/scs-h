@@ -16,7 +16,15 @@
 #define SHARED_ID "CHANNEL"
 
 #define BUF_LINES (4096 * 511)/64
-
+void printBinary(uint64_t num) {
+  for (int i = 63; i >= 0; i--) {
+    putchar((num & ((uint64_t)1 << i)) ? '1' : '0');
+    if (i % 8 == 0) { // Optional: for readability, add a space every 8 bits
+      putchar(' ');
+    }
+  }
+  putchar('\n');
+}
 // flush and reload should be straight forward
 // you can traverse the buffer and use the utility functions
 // to flush lines and perform the reload step.
@@ -34,7 +42,8 @@ int flush_reload(int size, uint8_t *buf) {
     clflush(lineAddr);
     timing += measure_line_access_time(lineAddr);
     if (timing < 500 || i*64 >292000 && i*64 <293000) {
-        printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
+      printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
+      printBinary(lineAddr);
     }
   }
 }
