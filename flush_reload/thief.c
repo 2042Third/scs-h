@@ -20,7 +20,7 @@
 void printBinary(uint64_t num) {
   for (int i = 63; i >= 0; i--) {
     putchar((num & ((uint64_t)1 << i)) ? '1' : '0');
-    if (i % 8 == 0) { // Optional: for readability, add a space every 8 bits
+    if (i % 8 == 0) {
       putchar(' ');
     }
   }
