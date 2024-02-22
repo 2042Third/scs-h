@@ -27,11 +27,18 @@ void printBinary(uint64_t num) {
   putchar('\n');
 }
 
-// Function to read the Time Stamp Counter
+// Read the Time Stamp Counter
 static inline uint64_t rdtsc() {
   uint32_t lo, hi;
   asm volatile("rdtsc" : "=a"(lo), "=d"(hi));
   return ((uint64_t)hi << 32) | lo;
+}
+
+void busy_wait_cycles(uint64_t cycles) {
+  uint64_t start = rdtsc();
+  while ((rdtsc() - start) < cycles) {
+    // Busy wait
+  }
 }
 
 // flush and reload should be straight forward
@@ -46,9 +53,13 @@ int flush_reload(int size, uint8_t *buf) {
     lineAddr= addr + i * L2_LINE_SIZE;
     (*((char *)lineAddr)) ++;
     clflush(lineAddr);
+    busy_wait_cycles(100); // 78 cycles is the average time to access a line in the cache by the vault
     timing=measure_line_access_time(lineAddr);
+
+    printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
+
 //    if (timing >0) {
-      printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
+//      printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
 //    }
   }
 }
