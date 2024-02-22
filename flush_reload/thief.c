@@ -55,11 +55,11 @@ int flush_reload(int size, uint8_t *buf) {
     busy_wait_cycles(1000); // 78 cycles is the average time to access a line in the cache by the vault
     timing=measure_line_access_time(lineAddr);
 
-    printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
+//    printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
 
-//    if (timing >0) {
-//      printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
-//    }
+    if (timing < 120) {
+      printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
+    }
   }
 }
 
