@@ -109,9 +109,9 @@ int main(int argc, char const *argv[]) {
     int max_set = -1;
     for (int set = 0; set < L2_SETS; set++) {
       uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
-      if(evict_count[set] > 995) {
+//      if(evict_count[set] > 995) {
         printf(" set addr = %ld, set number = %d , evict_count = %d\n",addr, set, evict_count[set]);
-      }
+//      }
 
       if (evict_count[set] > max_val) {
         max_val = evict_count[set];
