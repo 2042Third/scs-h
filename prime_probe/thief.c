@@ -68,11 +68,12 @@ bool prime_probe_l2_set(int set, char *buf) {
     busy_wait_cycles((end-start)*3); // 78 cycles is the average time to access a line in the cache by the vault
     timing = measure_line_access_time(lineAddr);
 
-    weighted_avg = ((end-start)/16)+9;
+    weighted_avg = ((end-start)/16)+4;
 
     if (set == 992 || set == 209 ) {
       printf("Time: %ld\n", (end-start));
-      printf("Address = %ld, set %d  timing = %d, weighted_avg = %ld \n", lineAddr, set, timing, weighted_avg);
+      printf("Address = %ld, set %d  timing = %d, weighted_avg = %ld (%ld) \n", lineAddr, set, timing
+                                    , weighted_avg, timing - weighted_avg);
     }
 
     if(timing > weighted_avg){
