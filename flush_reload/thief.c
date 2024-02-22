@@ -16,6 +16,7 @@
 #define SHARED_ID "CHANNEL"
 
 #define BUF_LINES (4096 * 511)/64
+
 void printBinary(uint64_t num) {
   for (int i = 63; i >= 0; i--) {
     putchar((num & ((uint64_t)1 << i)) ? '1' : '0');
@@ -25,6 +26,14 @@ void printBinary(uint64_t num) {
   }
   putchar('\n');
 }
+
+// Function to read the Time Stamp Counter
+static inline uint64_t rdtsc() {
+  uint32_t lo, hi;
+  asm volatile("rdtsc" : "=a"(lo), "=d"(hi));
+  return ((uint64_t)hi << 32) | lo;
+}
+
 // flush and reload should be straight forward
 // you can traverse the buffer and use the utility functions
 // to flush lines and perform the reload step.

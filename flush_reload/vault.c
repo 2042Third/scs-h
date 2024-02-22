@@ -20,6 +20,14 @@
 
 #define BUF_LINES (4096 * 511)/64
 
+
+// Function to read the Time Stamp Counter
+static inline uint64_t rdtsc() {
+  uint32_t lo, hi;
+  asm volatile("rdtsc" : "=a"(lo), "=d"(hi));
+  return ((uint64_t)hi << 32) | lo;
+}
+
 int get_random_code() {
     return rand() % BUF_LINES;
 }
@@ -56,9 +64,16 @@ int main(int argc, char const *argv[]) {
     int vault_code = get_random_code()*64;
 
     printf("vault_code: %d\n", vault_code);
-    while (1) {
-	    buf[vault_code]++;
-    }
+    uint64_t start, end, total = 0;
 
+  // Insert the block of code you want to measure here
+    for (int i= 0; i < 100; i++)  {
+//    while (1) {
+      start = rdtsc();
+	    buf[vault_code]++;
+      end = rdtsc();
+      total += end - start;
+    }
+    printf("average approx Cycles taken: %llu\n", total/100);
     return 0;
 }
