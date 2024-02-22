@@ -64,7 +64,7 @@ bool prime_probe_l2_set(int set, char *buf) {
       (*((char *)lineAddr+f)) ++;
     }
     end = rdtsc();
-    busy_wait_cycles(1500); // 78 cycles is the average time to access a line in the cache by the vault
+    busy_wait_cycles(1000); // 78 cycles is the average time to access a line in the cache by the vault
     timing = measure_line_access_time(lineAddr);
 
     if (set == 992 || set == 100 ) {
