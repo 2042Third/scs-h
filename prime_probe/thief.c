@@ -62,7 +62,7 @@ bool prime_probe_l2_set(int set, char *buf) {
 
     lineAddr = addr + i * L2_LINE_SIZE;
     clflush(lineAddr);
-    busy_wait_cycles(1249); // 78 cycles is the average time to access a line in the cache by the vault
+    busy_wait_cycles(200); // 78 cycles is the average time to access a line in the cache by the vault
                                    // 78*16+1 = 1249
     timing=measure_line_access_time(lineAddr);
 
@@ -90,7 +90,7 @@ int main(int argc, char const *argv[]) {
         evict_count[i] = 0;
     }
 
-    int num_reps = 100;
+    int num_reps = 10;
     for (int rep = 0; rep < num_reps; rep++) {
         for (int set = 0; set < L2_SETS; set++) {
             if (prime_probe_l2_set(set, buf)) {
