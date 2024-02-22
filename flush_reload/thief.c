@@ -30,14 +30,14 @@ void printBinary(uint64_t num) {
 // to flush lines and perform the reload step.
 int flush_reload(int size, uint8_t *buf) {
   uint64_t addr = (uint64_t) buf;
-
+  uint32_t timing = 0;
+  uint64_t lineAddr = 0;
   for (int i = 0; i < BUF_LINES; i++) {
     // Set the first byte of each line to 1
-    uint64_t lineAddr = addr + i * L2_LINE_SIZE;
+    lineAddr= addr + i * L2_LINE_SIZE;
 //    (*((char *)lineAddr)) ++;
     clflush(lineAddr);
-    uint32_t timing = measure_line_access_time(lineAddr);
-    timing += measure_line_access_time(lineAddr);
+    timing=measure_line_access_time(lineAddr);
     if (timing >500) {
       printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
       printBinary(lineAddr);
