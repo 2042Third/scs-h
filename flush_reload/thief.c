@@ -58,11 +58,10 @@ int flush_reload(int size, uint8_t *buf) {
     if (timing < min_timing) {
       min_timing = timing;
       min_addr = lineAddr;
-      printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
     }
 
   }
-  printf("Vault code: %d (%d)\n", min_addr, min_timing);
+  printf("Vault code: %ld (%d)\n", min_addr, min_timing);
 }
 
 int main(int argc, char const *argv[]) {
