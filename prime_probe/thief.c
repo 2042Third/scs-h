@@ -70,6 +70,9 @@ bool prime_probe_l2_set(int set, char *buf) {
     if (set == 992 || set == 100 ) {
       printf("Time: %ld\n", (end-start));
       printf("Address = %ld, set %d  timing = %d\n", lineAddr, set, timing);
+    }
+
+    if(timing > 30){
       found = true;
     }
   }
@@ -105,14 +108,16 @@ int main(int argc, char const *argv[]) {
     int max_val = 2;
     int max_set = -1;
     for (int set = 0; set < L2_SETS; set++) {
+      uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
+      printf(" set addr = %ld, set number = %d , evict_count = %d\n",addr, set, evict_count[set]);
 
-        if (evict_count[set] > max_val) {
-            max_val = evict_count[set];
-            max_set = set;
-          uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
-          printBinary(addr);
-          printf(" set addr = %ld, set number = %d , evict_count = %d\n",addr, set, evict_count[set]);
-        }
+      if (evict_count[set] > max_val) {
+        max_val = evict_count[set];
+        max_set = set;
+        uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
+        printBinary(addr);
+        printf(" set addr = %ld, set number = %d , evict_count = %d\n",addr, set, evict_count[set]);
+      }
     }
     printf("Vault code: %d (%d)\n", max_set, max_val);
 }
