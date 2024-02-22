@@ -56,7 +56,8 @@ int flush_reload(int size, uint8_t *buf) {
   for (int i = 0; i < BUF_LINES; i++) {
     // Set the first byte of each line to 1
     lineAddr= addr + i * L2_LINE_SIZE;
-    clflush(lineAddr);
+//    clflush(lineAddr);
+    (*((char*)lineAddr))++;
     busy_wait_cycles(1000); // 78 cycles is the average time to access a line in the cache by the vault
     timing=measure_line_access_time(lineAddr);
 
