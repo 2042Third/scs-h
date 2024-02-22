@@ -69,7 +69,6 @@ bool prime_probe_l2_set(int set, char *buf) {
     if (set == 992 || set == 100 ) {
       printf("Address = %ld, set %d  timing = %d\n",lineAddr ,set, timing);
       found = true;
-    }
   }
 
   return found;
