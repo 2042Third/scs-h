@@ -40,7 +40,6 @@ int flush_reload(int size, uint8_t *buf) {
     timing=measure_line_access_time(lineAddr);
     if (timing >1) {
       printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
-      printBinary(lineAddr);
     }
   }
 }
