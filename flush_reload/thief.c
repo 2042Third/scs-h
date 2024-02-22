@@ -63,7 +63,8 @@ int main(int argc, char const *argv[]) {
         printf("mmap error\n");
         exit(1);
     }
-    
+
+    printf("Verification_code: %d\n", buf [4]);
 
     // you may need to add repetitions  
     flush_reload(buf_size, buf);

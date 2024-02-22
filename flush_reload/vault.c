@@ -49,11 +49,15 @@ int main(int argc, char const *argv[]) {
         exit(1);
     }
 
+    // Added checking code to just make sure this is the right buffer
+    buf [4] = get_random_code()%256;
+    printf("Verification_code: %d\n", buf [4]);
+
     int vault_code = get_random_code()*64;
 
     printf("vault_code: %d\n", vault_code);
     while (1) {
-	buf[vault_code]++;
+	    buf[vault_code]++;
     }
 
     return 0;
