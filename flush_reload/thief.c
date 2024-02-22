@@ -34,6 +34,10 @@ static inline uint64_t rdtsc() {
   return ((uint64_t)hi << 32) | lo;
 }
 
+/**
+ * Busy wait for an approximate number of cycles.
+ * invariant: the number of cycles spent in this function is the least amount of cycles it should wait
+ * */
 void busy_wait_cycles(uint64_t cycles) {
   uint64_t start = rdtsc();
   while ((rdtsc() - start) < cycles) {
