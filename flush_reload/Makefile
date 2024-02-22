@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-O0 -I /usr/local
 VAULT_CPU=0
-THIEF_CPU=20
+THIEF_CPU=1
 
 TARGETS=thief vault
 UTILS=util.o 
