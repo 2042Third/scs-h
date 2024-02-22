@@ -37,9 +37,8 @@ int flush_reload(int size, uint8_t *buf) {
 //    (*((char *)lineAddr)) ++;
     clflush(lineAddr);
     uint32_t timing = measure_line_access_time(lineAddr);
-    clflush(lineAddr);
     timing += measure_line_access_time(lineAddr);
-    clflush(lineAddr);
+    timing += measure_line_access_time(lineAddr);
     timing += measure_line_access_time(lineAddr);
     if (timing < 500 || i*64 >292000 && i*64 <293000) {
       printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
