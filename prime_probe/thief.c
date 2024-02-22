@@ -67,8 +67,9 @@ bool prime_probe_l2_set(int set, char *buf) {
     timing=measure_line_access_time(lineAddr);
 
     if (set == 992 || set == 100 ) {
-      printf("Address = %ld, set %d  timing = %d\n",lineAddr ,set, timing);
+      printf("Address = %ld, set %d  timing = %d\n", lineAddr, set, timing);
       found = true;
+    }
   }
 
   return found;
