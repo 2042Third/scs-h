@@ -47,7 +47,8 @@ void busy_wait_cycles(uint64_t cycles) {
 int flush_reload(int size, uint8_t *buf) {
   uint64_t addr = (uint64_t) buf;
   uint32_t timing = 0, min_timing = 0xFFFFFFFF;
-  uint64_t lineAddr = 0, min_addr = 0;
+  uint64_t lineAddr = 0;
+  int min_addr = 0;
   for (int i = 0; i < BUF_LINES; i++) {
     // Set the first byte of each line to 1
     lineAddr= addr + i * L2_LINE_SIZE;
@@ -57,7 +58,7 @@ int flush_reload(int size, uint8_t *buf) {
 
     if (timing < min_timing) {
       min_timing = timing;
-      min_addr = lineAddr;
+      min_addr = i*64;
     }
 
   }
