@@ -54,10 +54,19 @@ bool prime_probe_l2_set(int set, char *buf) {
   uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
   uint32_t timing;
   uint64_t lineAddr;
+  uint64_t start=0, end =0;
   for (int i = 0; i < L2_WAYS; i++) {
     // Set the first byte of each line to 1
     lineAddr = addr + i * L2_LINE_SIZE;
-    (*((char *)lineAddr)) ++;
+
+    start = rdtsc();
+    for (int f = 0; f < 64; f++) {
+      (*((char *)lineAddr+f)) ++;
+    }
+    end = rdtsc();
+    if (set == 992 || set == 100 ) {
+      printf("Time: %ld\n", (end-start));
+    }
     timing = measure_line_access_time(lineAddr);
 
     lineAddr = addr + i * L2_LINE_SIZE;
