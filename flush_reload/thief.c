@@ -81,8 +81,6 @@ int main(int argc, char const *argv[]) {
         exit(1);
     }
 
-    printf("Verification_code: %d\n", buf [4]);
-
     // you may need to add repetitions  
     flush_reload(buf_size, buf);
     //print the key code and access time in the following  form
