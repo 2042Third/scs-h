@@ -67,7 +67,7 @@ bool prime_probe_l2_set(int set, char *buf) {
     busy_wait_cycles(1500); // 78 cycles is the average time to access a line in the cache by the vault
     timing = measure_line_access_time(lineAddr);
 
-    if (set == 992 || set == 100 ) {
+    if (set == 992 || set == 209 ) {
       printf("Time: %ld\n", (end-start));
       printf("Address = %ld, set %d  timing = %d\n", lineAddr, set, timing);
     }
