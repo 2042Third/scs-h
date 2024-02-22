@@ -35,10 +35,10 @@ int flush_reload(int size, uint8_t *buf) {
   for (int i = 0; i < BUF_LINES; i++) {
     // Set the first byte of each line to 1
     lineAddr= addr + i * L2_LINE_SIZE;
-//    (*((char *)lineAddr)) ++;
+    (*((char *)lineAddr)) ++;
     clflush(lineAddr);
     timing=measure_line_access_time(lineAddr);
-    if (timing >400) {
+    if (timing >1) {
       printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
     }
   }
