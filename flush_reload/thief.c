@@ -52,7 +52,7 @@ int flush_reload(int size, uint8_t *buf) {
     // Set the first byte of each line to 1
     lineAddr= addr + i * L2_LINE_SIZE;
     clflush(lineAddr);
-    busy_wait_cycles(100); // 78 cycles is the average time to access a line in the cache by the vault
+    busy_wait_cycles(1000); // 78 cycles is the average time to access a line in the cache by the vault
     timing=measure_line_access_time(lineAddr);
 
     printf("Address = %ld, set %d  timing = %d\n",lineAddr,i*64, timing);
