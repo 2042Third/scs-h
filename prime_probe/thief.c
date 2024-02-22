@@ -72,7 +72,7 @@ bool prime_probe_l2_set(int set, char *buf) {
       printf("Address = %ld, set %d  timing = %d\n", lineAddr, set, timing);
     }
 
-    if(timing > ((end-start)/16)+5 ){
+    if(timing > ((end-start)/16)+8 ){
       found = true;
     }
   }
