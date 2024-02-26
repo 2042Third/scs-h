@@ -16,7 +16,7 @@ void rand_mem_cpy(cache_line* head, void* mem, size_t size, size_t sets);
 cache_line* setup_cache(int ways, int sets, void* mem);
 void free_cache(cache_line* cache);
 cache_line* recur_prime_cache(cache_line* cache);
-void prime_cache(cache_line* cache);
+void prime_cache(cache_line* cache,void*buf);
 void probe_cache(cache_line* cache);
 void scramble_and_clear_cache(cache_line* cache,int ways, int sets, void* mem);
 

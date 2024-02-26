@@ -83,7 +83,7 @@ int main(int argc, char const *argv[]) {
   for (int rep = 0; rep < num_reps; rep++) {
     scramble_and_clear_cache(cache_head, L2_WAYS, L2_SETS, buf);
     for (int i=0 ; i< L2_SETS*L2_WAYS ; i++) {
-      prime_cache( curr);
+      prime_cache( curr,buf);
       busy_wait_cycles(500);
       probe_cache( curr);
       curr = curr->next;

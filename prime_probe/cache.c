@@ -5,6 +5,7 @@
 #include "cache.h"
 #include "linked_list.h"
 #include "util.h"
+#include "params.h"
 
 // Function to use cpuid for serialization
 void serialize() {
@@ -54,9 +55,11 @@ cache_line* recur_prime_cache(cache_line* cache){
   return cache->next;
 }
 
-void prime_cache(cache_line* head) {
+void prime_cache(cache_line* head,void*buf) {
+  uint64_t addr = (uint64_t) (buf + (head->setNum * L2_WAYS * L2_LINE_SIZE));
   serialize();
   (*((char *)head->lineAddr)) ++;
+  (*((char *)addr)) ++;
   mfence();
   serialize();
 }
