@@ -17,6 +17,8 @@ cache_line* setup_cache(int ways, int sets, void* mem);
 void free_cache(cache_line* cache);
 cache_line* recur_prime_cache(cache_line* cache);
 void prime_cache(cache_line* cache);
+void probe_cache(cache_line* cache);
+void scramble_and_clear_cache(cache_line* cache,int ways, int sets, void* mem);
 
 static inline uint64_t rdtsc()__attribute__((always_inline));
 static inline uint64_t rdtscp()__attribute__((always_inline));

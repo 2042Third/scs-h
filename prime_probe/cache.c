@@ -55,10 +55,20 @@ cache_line* recur_prime_cache(cache_line* cache){
 }
 
 void prime_cache(cache_line* head) {
-  cache_line* curr = head;
-  while (curr != NULL){
-    curr = recur_prime_cache(curr);
-  }
+  serialize();
+  (*((char *)head->lineAddr)) ++;
+  mfence();
+  serialize();
+}
+
+void probe_cache(cache_line* head) {
+  serialize();
+  head->start = rdtsc();
+  measure_line_access_time(head->lineAddr);
+  mfence();
+  head->end = rdtscp();
+  serialize();
+  head->timing = head->end - head->start;
 }
 
 /**
@@ -70,6 +80,18 @@ void prime_cache(cache_line* head) {
    rand_mem_cpy(head, mem, ways * sets,ways );
    return head;
  }
+
+void scramble_and_clear_cache (cache_line* cache,int ways, int sets, void* mem) {
+   cache_line * curr = cache;
+    while (curr != NULL) {
+      curr->lineAddr = 0;
+      curr->setNum = 0;
+      curr->start = 0;
+      curr->end = 0;
+      curr = curr->next;
+    }
+  rand_mem_cpy(cache, mem, ways * sets,ways );
+}
 
  /**
   * Free the linked list cache

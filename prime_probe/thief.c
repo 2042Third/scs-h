@@ -87,13 +87,23 @@ int main(int argc, char const *argv[]) {
   cache_line* cache_head = setup_cache(L2_WAYS, L2_SETS, buf);
   cache_line* curr = cache_head;
 
-  int num_reps = 10;
+  int num_reps = 1;
   for (int rep = 0; rep < num_reps; rep++) {
-    prime_cache(curr);
-    for (int i=0 ; i< L2_SETS ; i++) {
-      if (prime_probe_l2_set(i, buf, curr)) {
-        evict_count[i]++;
+    scramble_and_clear_cache(cache_head, L2_WAYS, L2_SETS, buf);
+    for (int i=0 ; i< L2_SETS*L2_WAYS ; i++) {
+      prime_cache( curr);
+      busy_wait_cycles(140);
+      probe_cache( curr);
+      curr = curr->next;
+    }
+    curr = cache_head;
+    for (int i=0 ; i< L2_SETS*L2_WAYS  ; i++) {
+      if (curr->timing>30) {
+        evict_count[curr->setNum]++;
+        printf("Address = %ld, set %d  timing = %d \n", curr->lineAddr
+               , curr->setNum, curr->timing);
       }
+      curr = curr->next;
     }
   }
 
