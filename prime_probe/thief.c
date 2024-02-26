@@ -90,7 +90,7 @@ int main(int argc, char const *argv[]) {
     }
     curr = cache_head;
     for (int i=0 ; i< L2_SETS*L2_WAYS  ; i++) {
-      if(curr->setNum == 952 || curr->setNum == 209 || curr->setNum == 992) {
+      if(curr->setNum == 952 || curr->setNum == 886) {
         printf("Address = %ld, timing = %d set %d  \n", curr->lineAddr, curr->timing,
                curr->setNum);
       }
