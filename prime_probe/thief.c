@@ -87,7 +87,10 @@ int main(int argc, char const *argv[]) {
 
   struct timespec duration;
   duration.tv_sec = 0;  // seconds
-  duration.tv_nsec = 1000;  // nanoseconds (1 millisecond)
+  duration.tv_nsec = 1000;  // nanoseconds
+  struct timespec lduration;
+  lduration.tv_sec = 0;  // seconds
+  lduration.tv_nsec = 1000000;  // nanoseconds
 
   int num_reps = 100;
   for (int rep = 0; rep < num_reps; rep++) {
