@@ -62,10 +62,10 @@ void prime_cache(cache_line* head) {
 }
 
 void probe_cache(cache_line* head) {
-  serialize();
+//  serialize();
   head->timing = measure_line_access_time(head->lineAddr);
 
-  serialize();
+//  serialize();
 //  head->timing = head->end - head->start;
 }
 

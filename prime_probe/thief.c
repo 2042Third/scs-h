@@ -60,15 +60,7 @@ bool prime_probe_l2_set(int set, char *buf, cache_line* curr) {
   return found;
 }
 
-bool prime_probe_l2_line(int line, cache_line* curr) {
-  serialize();
-  curr->start = rdtsc();
-  measure_line_access_time(curr->lineAddr);
-  mfence();
-  curr->end = rdtscp();
-  serialize();
-  return false;
-}
+
 
 int main(int argc, char const *argv[]) {
   void *buf = NULL;
