@@ -6,7 +6,7 @@
 #define LAB1_15793_CACHE_H
 
 #include <stdlib.h>
-
+#include <stdint.h>
 
 void serialize();
 void busy_wait_cycles(uint64_t cycles);
