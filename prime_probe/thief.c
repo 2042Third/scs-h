@@ -10,6 +10,7 @@
 #include "util.h"
 #include "params.h"
 #include <sys/mman.h>
+#include "cache.h"
 
 void printBinary(uint64_t num) {
   for (int i = 63; i >= 0; i--) {
@@ -21,23 +22,7 @@ void printBinary(uint64_t num) {
   putchar('\n');
 }
 
-// Read the Time Stamp Counter
-static inline uint64_t rdtsc() {
-  uint32_t lo, hi;
-  asm volatile("rdtsc" : "=a"(lo), "=d"(hi));
-  return ((uint64_t)hi << 32) | lo;
-}
 
-/**
- * Busy wait for an approximate number of cycles.
- * invariant: the number of cycles spent in this function is the least amount of cycles it should wait
- * */
-void busy_wait_cycles(uint64_t cycles) {
-  uint64_t start = rdtsc();
-  while ((rdtsc() - start) < cycles) {
-    // Busy wait
-  }
-}
 
 
 
@@ -59,12 +44,14 @@ bool prime_probe_l2_set(int set, char *buf) {
   for (int i = 0; i < L2_WAYS; i++) {
     // Set the first byte of each line to 1
     lineAddr = addr + i * L2_LINE_SIZE;
-
-    start = rdtsc();
+    serialize();
     for (int f = 0; f < 64; f++) {
+      start = rdtsc();
       (*((char *)lineAddr+f)) ++;
+      mfence();
+      end = rdtsc();
     }
-    end = rdtsc();
+    serialize();
     busy_wait_cycles((end-start)*3); // 78 cycles is the average time to access a line in the cache by the vault
     timing = measure_line_access_time(lineAddr);
 
