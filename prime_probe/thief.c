@@ -49,7 +49,6 @@ bool prime_probe_l2_set(int set, char *buf, cache_line* curr) {
   serialize();
   timing = end - start;
     if (set == 992 || set == 209 || set == 63) {
-      printf("Time: %ld\n", (end-start));
       printf("Address = %ld, set %d  timing = %d \n", lineAddr, set, timing);
     }
 
