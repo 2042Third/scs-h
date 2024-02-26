@@ -86,10 +86,10 @@ int main(int argc, char const *argv[]) {
 
   cache_line* cache_head = setup_cache(L2_WAYS, L2_SETS, buf);
   cache_line* curr = cache_head;
-  prime_cache(curr);
 
   int num_reps = 10;
   for (int rep = 0; rep < num_reps; rep++) {
+    prime_cache(curr);
     for (int i=0 ; i< L2_SETS ; i++) {
       if (prime_probe_l2_set(i, buf, curr)) {
         evict_count[i]++;
