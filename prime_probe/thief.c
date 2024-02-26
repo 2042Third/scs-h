@@ -99,7 +99,7 @@ int main(int argc, char const *argv[]) {
       if(i == 952 || i== 886) {
         printf(" timing = %d set %d  \n", min_cycle[i],i);
       }
-      if (min_cycle[i]>26) {
+      if (min_cycle[i]>21) {
         evict_count[i]++;
       }
     }
