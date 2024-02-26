@@ -31,39 +31,39 @@ void printBinary(uint64_t num) {
 // you might want to consider adding some delay between steps
 // finally you need to traverse the list one more time to retrieve 
 // the time measurements
-bool prime_probe_l2_set(int set, char *buf) {
+bool prime_probe_l2_set(int set, char *buf, cache_line* curr) {
   bool found = false;
-  uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
-  uint32_t timing;
-  uint64_t lineAddr;
-  uint64_t start=0, end =0;
-  uint64_t weighted_avg;
-  for (int i = 0; i < L2_WAYS; i++) {
-    // Set the first byte of each line to 1
-    lineAddr = addr + i * L2_LINE_SIZE;
-    serialize();
-    for (int f = 0; f < L2_LINE_SIZE; f++) {
-      start = rdtsc();
-      (*((char *)lineAddr+f)) ++;
-      mfence();
-      end = rdtsc();
-    }
-    serialize();
-    busy_wait_cycles((end-start)*3); // 78 cycles is the average time to access a line in the cache by the vault
-    timing = measure_line_access_time(lineAddr);
-
-    weighted_avg = ((end-start)/16)+4;
-
-    if (set == 992 || set == 209 ) {
-      printf("Time: %ld\n", (end-start));
-      printf("Address = %ld, set %d  timing = %d, weighted_avg = %ld (%ld) \n", lineAddr, set, timing
-                                    , weighted_avg, timing - weighted_avg);
-    }
-
-    if(timing > weighted_avg){
-      found = true;
-    }
-  }
+//  uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
+//  uint32_t timing;
+//  uint64_t lineAddr;
+//  uint64_t start=0, end =0;
+//  uint64_t weighted_avg;
+//  for (int i = 0; i < L2_WAYS; i++) {
+//    // Set the first byte of each line to 1
+//    lineAddr = addr + i * L2_LINE_SIZE;
+//    serialize();
+//    for (int f = 0; f < L2_LINE_SIZE; f++) {
+//      start = rdtsc();
+//      (*((char *)lineAddr+f)) ++;
+//      mfence();
+//      end = rdtsc();
+//    }
+//    serialize();
+//    busy_wait_cycles((end-start)*3); // 78 cycles is the average time to access a line in the cache by the vault
+//    timing = measure_line_access_time(lineAddr);
+//
+//    weighted_avg = ((end-start)/16)+4;
+//
+//    if (set == 992 || set == 209 ) {
+//      printf("Time: %ld\n", (end-start));
+//      printf("Address = %ld, set %d  timing = %d, weighted_avg = %ld (%ld) \n", lineAddr, set, timing
+//                                    , weighted_avg, timing - weighted_avg);
+//    }
+//
+//    if(timing > weighted_avg){
+//      found = true;
+//    }
+//  }
 
   return found;
 }
@@ -84,11 +84,13 @@ int main(int argc, char const *argv[]) {
   }
 
   cache_line* cache_head = setup_cache(L2_WAYS, L2_SETS, buf);
+  cache_line* curr = cache_head;
+  prime_cache(curr);
 
   int num_reps = 100;
   for (int rep = 0; rep < num_reps; rep++) {
     for (int set = 0; set < L2_SETS; set++) {
-      if (prime_probe_l2_set(set, buf)) {
+      if (prime_probe_l2_set(set, buf, curr)) {
         evict_count[set]++;
       }
     }

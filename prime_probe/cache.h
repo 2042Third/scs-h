@@ -15,6 +15,8 @@ void busy_wait_cycles(uint64_t cycles);
 void rand_mem_cpy(cache_line* head, void* mem, size_t size, size_t ways);
 cache_line* setup_cache(int ways, int sets, void* mem);
 void free_cache(cache_line* cache);
+cache_line* recur_prime_cache(cache_line* cache);
+void prime_cache(cache_line* cache);
 
 static inline uint64_t rdtsc()__attribute__((always_inline));
 static inline uint64_t rdtscp()__attribute__((always_inline));

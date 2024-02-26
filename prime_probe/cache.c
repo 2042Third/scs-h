@@ -44,6 +44,22 @@ void rand_mem_cpy(cache_line* head, void* mem, size_t size, size_t ways) {
   }
   free(arr);
 }
+cache_line* recur_prime_cache(cache_line* cache){
+  serialize();
+//  cache->start = rdtsc();
+  (*((char *)cache->lineAddr)) ++;
+  mfence();
+//  cache->end = rdtscp();
+  serialize();
+  return cache->next;
+}
+
+void prime_cache(cache_line* head) {
+  cache_line* curr = head;
+  while (curr != NULL){
+    curr = recur_prime_cache(curr);
+  }
+}
 
 /**
  * Create the cache linked list
