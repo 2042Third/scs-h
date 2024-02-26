@@ -63,12 +63,10 @@ void prime_cache(cache_line* head) {
 
 void probe_cache(cache_line* head) {
   serialize();
-  head->start = rdtsc();
-  measure_line_access_time(head->lineAddr);
-  mfence();
-  head->end = rdtscp();
+  head->timing = measure_line_access_time(head->lineAddr);
+
   serialize();
-  head->timing = head->end - head->start;
+//  head->timing = head->end - head->start;
 }
 
 /**
