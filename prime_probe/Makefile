@@ -6,9 +6,10 @@ THIEF_CPU=1
 TARGETS=thief
 UTILS=util.o
 CACHE=cache.o
+LINKED_LIST=linked_list.o
 .PHONY:	clean all run_vault run_thief
 
--include thief.d util.d cache.d
+-include thief.d util.d cache.d	linked_list.d
 
 all: $(TARGETS)
 
@@ -18,10 +19,13 @@ $(UTILS): %.o: %.c %.h
 $(CACHE): %.o: %.c %.h
 	$(CC) $(CFLAGS) -MMD -c $<
 
+$(LINKED_LIST): %.o: %.c %.h
+	$(CC) $(CFLAGS) -MMD -c $<
+
 %.o: %.c util.h
 	$(CC) $(CFLAGS) -MMD  -c $< 
 
-$(TARGETS): %:%.o util.o cache.o
+$(TARGETS): %:%.o util.o cache.o linked_list.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 run_vault: vault
