@@ -4,20 +4,24 @@ VAULT_CPU=0
 THIEF_CPU=1
 
 TARGETS=thief
-UTILS=util.o 
+UTILS=util.o
+CACHE=cache.o
 .PHONY:	clean all run_vault run_thief
 
--include thief.d util.d
+-include thief.d util.d cache.d
 
 all: $(TARGETS)
 
 $(UTILS): %.o: %.c %.h
 	$(CC) $(CFLAGS) -MMD -c $<
 
+$(CACHE): %.o: %.c %.h
+	$(CC) $(CFLAGS) -MMD -c $<
+
 %.o: %.c util.h
 	$(CC) $(CFLAGS) -MMD  -c $< 
 
-$(TARGETS): %:%.o util.o
+$(TARGETS): %:%.o util.o cache.o
 	$(CC) $(CFLAGS) $^ -o $@
 
 run_vault: vault
