@@ -84,7 +84,7 @@ int main(int argc, char const *argv[]) {
     scramble_and_clear_cache(cache_head, L2_WAYS, L2_SETS, buf);
     for (int i=0 ; i< L2_SETS*L2_WAYS ; i++) {
       prime_cache( curr);
-      busy_wait_cycles(300);
+      busy_wait_cycles(500);
       probe_cache( curr);
       curr = curr->next;
     }
@@ -94,7 +94,7 @@ int main(int argc, char const *argv[]) {
         printf("Address = %ld, timing = %d set %d  \n", curr->lineAddr, curr->timing,
                curr->setNum);
       }
-      if (curr->timing>26) {
+      if (curr->timing>27) {
         evict_count[curr->setNum]++;
       }
       curr = curr->next;
