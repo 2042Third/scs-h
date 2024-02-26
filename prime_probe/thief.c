@@ -72,8 +72,10 @@ int main(int argc, char const *argv[]) {
   *((char *)buf) = 5;
 
   int evict_count[L2_SETS];
+  int min_cycle[L2_SETS];
   for (int i = 0; i < L2_SETS; i++) {
     evict_count[i] = 0;
+    min_cycle[i] = 1000;
   }
 
   cache_line* cache_head = setup_cache(L2_WAYS, L2_SETS, buf);
@@ -86,20 +88,21 @@ int main(int argc, char const *argv[]) {
       prime_cache( curr,buf);
       busy_wait_cycles(500);
       probe_cache( curr);
-      curr = curr->next;
-    }
-    curr = cache_head;
-    for (int i=0 ; i< L2_SETS*L2_WAYS  ; i++) {
-      if(curr->setNum == 952 || curr->setNum == 886) {
-        printf("Address = %ld, timing = %d set %d  \n", curr->lineAddr, curr->timing,
-               curr->setNum);
-      }
-      if (curr->timing>29) {
-        evict_count[curr->setNum]++;
+      if(min_cycle[curr->setNum] > curr->timing) {
+        min_cycle[curr->setNum] = curr->timing;
       }
       curr = curr->next;
     }
+
     curr = cache_head;
+    for (int i=0 ; i< L2_SETS ; i++) {
+      if(i == 952 || i== 886) {
+        printf(" timing = %d set %d  \n", min_cycle[i],i);
+      }
+      if (min_cycle[i]>26) {
+        evict_count[i]++;
+      }
+    }
   }
 
   free_cache(cache_head);
