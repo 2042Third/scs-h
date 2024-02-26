@@ -94,7 +94,7 @@ int main(int argc, char const *argv[]) {
         printf("Address = %ld, timing = %d set %d  \n", curr->lineAddr, curr->timing,
                curr->setNum);
       }
-      if (curr->timing>30) {
+      if (curr->timing>26) {
         evict_count[curr->setNum]++;
       }
       curr = curr->next;
