@@ -98,6 +98,10 @@ int main(int argc, char const *argv[]) {
     }
     curr = cache_head;
     for (int i=0 ; i< L2_SETS*L2_WAYS  ; i++) {
+      if(curr->setNum == 63 || curr->setNum == 209 || curr->setNum == 992) {
+        printf("Address = %ld, set %d  timing = %d \n", curr->lineAddr, curr->setNum,
+               curr->timing);
+      }
       if (curr->timing>135) {
         evict_count[curr->setNum]++;
       }
