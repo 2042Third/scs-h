@@ -17,8 +17,8 @@ void serialize() {
  * invariant: the number of cycles spent in this function is the least amount of cycles it should wait
  * */
 void busy_wait_cycles(uint64_t cycles) {
-  uint64_t start = rdtsc();
-  while ((rdtsc() - start) < cycles) {
+  uint64_t end = rdtsc()+cycles;
+  while (rdtsc()<end ) {
     // Busy wait
   }
 }
