@@ -33,41 +33,43 @@ void printBinary(uint64_t num) {
 // the time measurements
 bool prime_probe_l2_set(int set, char *buf, cache_line* curr) {
   bool found = false;
-//  uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
-//  uint32_t timing;
-//  uint64_t lineAddr;
-//  uint64_t start=0, end =0;
+  uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
+  uint32_t timing;
+  uint64_t lineAddr;
+  uint64_t start=0, end =0;
 //  uint64_t weighted_avg;
 //  for (int i = 0; i < L2_WAYS; i++) {
-//    // Set the first byte of each line to 1
+    // Set the first byte of each line to 1
 //    lineAddr = addr + i * L2_LINE_SIZE;
-//    serialize();
-//    for (int f = 0; f < L2_LINE_SIZE; f++) {
-//      start = rdtsc();
-//      (*((char *)lineAddr+f)) ++;
-//      mfence();
-//      end = rdtsc();
-//    }
-//    serialize();
-//    busy_wait_cycles((end-start)*3); // 78 cycles is the average time to access a line in the cache by the vault
-//    timing = measure_line_access_time(lineAddr);
-//
-//    weighted_avg = ((end-start)/16)+4;
-//
-//    if (set == 992 || set == 209 ) {
-//      printf("Time: %ld\n", (end-start));
-//      printf("Address = %ld, set %d  timing = %d, weighted_avg = %ld (%ld) \n", lineAddr, set, timing
-//                                    , weighted_avg, timing - weighted_avg);
-//    }
-//
-//    if(timing > weighted_avg){
-//      found = true;
-//    }
+  serialize();
+  start = rdtsc();
+  measure_line_access_time(addr);
+  mfence();
+  end = rdtscp();
+  serialize();
+  timing = end - start;
+    if (set == 992 || set == 209 || set == 63) {
+      printf("Time: %ld\n", (end-start));
+      printf("Address = %ld, set %d  timing = %d \n", lineAddr, set, timing);
+    }
+
+    if(timing > 30){
+      found = true;
+    }
 //  }
 
   return found;
 }
 
+bool prime_probe_l2_line(int line, cache_line* curr) {
+  serialize();
+  curr->start = rdtsc();
+  measure_line_access_time(curr->lineAddr);
+  mfence();
+  curr->end = rdtscp();
+  serialize();
+  return false;
+}
 
 int main(int argc, char const *argv[]) {
   void *buf = NULL;
@@ -87,11 +89,11 @@ int main(int argc, char const *argv[]) {
   cache_line* curr = cache_head;
   prime_cache(curr);
 
-  int num_reps = 100;
+  int num_reps = 10;
   for (int rep = 0; rep < num_reps; rep++) {
-    for (int set = 0; set < L2_SETS; set++) {
-      if (prime_probe_l2_set(set, buf, curr)) {
-        evict_count[set]++;
+    for (int i=0 ; i< L2_SETS ; i++) {
+      if (prime_probe_l2_set(i, buf, curr)) {
+        evict_count[i]++;
       }
     }
   }
