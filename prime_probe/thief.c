@@ -12,6 +12,7 @@
 #include <sys/mman.h>
 #include "cache.h"
 #include "linked_list.h"
+#include <time.h>
 
 void printBinary(uint64_t num) {
   for (int i = 63; i >= 0; i--) {
@@ -60,6 +61,9 @@ bool prime_probe_l2_set(int set, char *buf, cache_line* curr) {
   return found;
 }
 
+void wait_and_yield(const struct timespec *duration) {
+  nanosleep(duration, NULL);
+}
 
 
 int main(int argc, char const *argv[]) {
@@ -81,12 +85,19 @@ int main(int argc, char const *argv[]) {
   cache_line* cache_head = setup_cache(L2_WAYS, L2_SETS, buf);
   cache_line* curr = cache_head;
 
+  struct timespec duration;
+  duration.tv_sec = 0;  // seconds
+  duration.tv_nsec = 1000000;  // nanoseconds (1 millisecond)
+
   int num_reps = 100;
   for (int rep = 0; rep < num_reps; rep++) {
     scramble_and_clear_cache(cache_head, L2_WAYS, L2_SETS, buf);
     for (int i=0 ; i< L2_SETS*L2_WAYS ; i++) {
       prime_cache( curr,buf);
-      busy_wait_cycles(40);
+//      busy_wait_cycles(40);
+
+      wait_and_yield(&duration);
+
       probe_cache( curr);
       if(min_cycle[curr->setNum] > curr->timing) {
         min_cycle[curr->setNum] = curr->timing;
