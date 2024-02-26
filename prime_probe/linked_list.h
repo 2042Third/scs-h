@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 typedef struct cache_line cache_line;
+typedef struct set_line_addr set_line_addr;
 
 struct cache_line {
     cache_line *next;
@@ -18,8 +19,14 @@ struct cache_line {
     uint32_t end;
     uint32_t timing;
 
+    uint16_t setNum;
     uint64_t lineAddr;
 
+};
+
+struct set_line_addr {
+    uint16_t setNum;
+    uint64_t lineAddr;
 };
 
 cache_line* setup_linked_list(int ways, int sets);

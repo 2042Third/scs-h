@@ -4,6 +4,7 @@
 
 #include "cache.h"
 #include "linked_list.h"
+#include "util.h"
 
 // Function to use cpuid for serialization
 void serialize() {
@@ -23,10 +24,35 @@ void busy_wait_cycles(uint64_t cycles) {
 }
 
 /**
+ * Copy the address of the buffer into the linked list randomly
+ * */
+void rand_mem_cpy(cache_line* head, void* mem, size_t size, size_t ways) {
+  cache_line* curr = head;
+  char ** arr = (char **) malloc(size * sizeof(set_line_addr*));
+  for (int i = 0; i < size; i++) { // copy the address of the buffer into array sequentially
+    set_line_addr* cache = (set_line_addr*) malloc(sizeof(set_line_addr));
+    cache->lineAddr = (uint64_t) mem+i;
+    cache->setNum = i % ways;
+    arr[i] = (char*) cache;
+  }
+  shuffle((char **) arr, size);
+  for (int i = 0; i < size; i++) {
+    set_line_addr* cache = (set_line_addr*) arr[i];
+    curr->lineAddr = cache->lineAddr;
+    curr->setNum = cache->setNum;
+    curr = curr->next;
+  }
+  free(arr);
+}
+
+/**
  * Create the cache linked list
  * */
- cache_line * setup_cache(int ways, int sets) {
-   return setup_linked_list(ways, sets);
+ cache_line * setup_cache(int ways, int sets, void* mem) {
+   cache_line * head = setup_linked_list(ways, sets);
+
+   rand_mem_cpy(head, mem, ways * sets,ways );
+   return head;
  }
 
  /**
@@ -35,3 +61,4 @@ void busy_wait_cycles(uint64_t cycles) {
   void free_cache(cache_line * cache) {
     free_linked_list(cache);
   }
+

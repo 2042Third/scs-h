@@ -83,7 +83,7 @@ int main(int argc, char const *argv[]) {
     evict_count[i] = 0;
   }
 
-  cache_line* cache_head = setup_cache(L2_WAYS, L2_SETS);
+  cache_line* cache_head = setup_cache(L2_WAYS, L2_SETS, buf);
 
   int num_reps = 100;
   for (int rep = 0; rep < num_reps; rep++) {
