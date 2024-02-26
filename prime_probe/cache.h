@@ -12,13 +12,21 @@ void serialize();
 void busy_wait_cycles(uint64_t cycles);
 
 static inline uint64_t rdtsc()__attribute__((always_inline));
+static inline uint64_t rdtscp()__attribute__((always_inline));
 static inline void mfence()__attribute__((always_inline));
 static inline void cpuid(int code, uint32_t* a, uint32_t* d)__attribute__((always_inline));
 
 // Read the Time Stamp Counter
 static inline uint64_t rdtsc() {
   uint32_t lo, hi;
-  asm volatile("rdtsp" : "=a"(lo), "=d"(hi));
+  asm volatile("rdtsc" : "=a"(lo), "=d"(hi));
+  return ((uint64_t)hi << 32) | lo;
+}
+
+// Read the Time Stamp Counter and the Processor ID
+static inline uint64_t rdtscp() {
+  uint32_t lo, hi;
+  asm volatile("rdtscp" : "=a"(lo), "=d"(hi) :: "%rcx");
   return ((uint64_t)hi << 32) | lo;
 }
 
