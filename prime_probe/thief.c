@@ -86,7 +86,7 @@ int main(int argc, char const *argv[]) {
     scramble_and_clear_cache(cache_head, L2_WAYS, L2_SETS, buf);
     for (int i=0 ; i< L2_SETS*L2_WAYS ; i++) {
       prime_cache( curr,buf);
-      busy_wait_cycles(1200);
+      busy_wait_cycles(40);
       probe_cache( curr);
       if(min_cycle[curr->setNum] > curr->timing) {
         min_cycle[curr->setNum] = curr->timing;
