@@ -6,6 +6,7 @@
 #define LAB1_15793_LINKED_LIST_H
 
 #include <stdlib.h>
+#include <stdint.h>
 
 typedef struct cache_line cache_line;
 
