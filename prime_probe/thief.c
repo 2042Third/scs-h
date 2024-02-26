@@ -107,7 +107,7 @@ int main(int argc, char const *argv[]) {
 
   free_cache(cache_head);
 
-  int max_val = 2;
+  int max_val = 0;
   int max_set = -1;
   for (int set = 0; set < L2_SETS; set++) {
     uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
