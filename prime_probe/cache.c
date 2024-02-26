@@ -3,6 +3,7 @@
 //
 
 #include "cache.h"
+#include "linked_list.h"
 
 // Function to use cpuid for serialization
 void serialize() {
@@ -20,3 +21,17 @@ void busy_wait_cycles(uint64_t cycles) {
     // Busy wait
   }
 }
+
+/**
+ * Create the cache linked list
+ * */
+ cache_line * setup_cache(int ways, int sets) {
+   return setup_linked_list(ways, sets);
+ }
+
+ /**
+  * Free the linked list cache
+  * */
+  void free_cache(cache_line * cache) {
+    free_linked_list(cache);
+  }

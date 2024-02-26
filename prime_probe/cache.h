@@ -8,8 +8,12 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+typedef struct cache_line cache_line;
+
 void serialize();
 void busy_wait_cycles(uint64_t cycles);
+cache_line* setup_cache(int ways, int sets);
+void free_cache(cache_line* cache);
 
 static inline uint64_t rdtsc()__attribute__((always_inline));
 static inline uint64_t rdtscp()__attribute__((always_inline));

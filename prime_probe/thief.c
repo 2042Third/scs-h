@@ -11,6 +11,7 @@
 #include "params.h"
 #include <sys/mman.h>
 #include "cache.h"
+#include "linked_list.h"
 
 void printBinary(uint64_t num) {
   for (int i = 63; i >= 0; i--) {
@@ -21,10 +22,6 @@ void printBinary(uint64_t num) {
   }
   putchar('\n');
 }
-
-
-
-
 
 // you will need to generate an eviction linked list structure with next,
 // previous pointers and time measurements
@@ -45,7 +42,7 @@ bool prime_probe_l2_set(int set, char *buf) {
     // Set the first byte of each line to 1
     lineAddr = addr + i * L2_LINE_SIZE;
     serialize();
-    for (int f = 0; f < 64; f++) {
+    for (int f = 0; f < L2_LINE_SIZE; f++) {
       start = rdtsc();
       (*((char *)lineAddr+f)) ++;
       mfence();
@@ -73,44 +70,47 @@ bool prime_probe_l2_set(int set, char *buf) {
 
 
 int main(int argc, char const *argv[]) {
-    void *buf = NULL;
-    int buf_size = 1 << 21;
-    if (posix_memalign(&buf, 1 << 21, buf_size)) { // Allocates 2MB aligned memory, begins at 0x200000
-        perror("posix_memalign");
-    }
-    madvise(buf, buf_size, MADV_HUGEPAGE);
-    *((char *)buf) = 5;
+  void *buf = NULL;
+  int buf_size = 1 << 21;
+  if (posix_memalign(&buf, 1 << 21, buf_size)) { // Allocates 2MB aligned memory, begins at 0x200000
+    perror("posix_memalign");
+  }
+  madvise(buf, buf_size, MADV_HUGEPAGE);
+  *((char *)buf) = 5;
 
-    int evict_count[L2_SETS];
-    for (int i = 0; i < L2_SETS; i++) {
-        evict_count[i] = 0;
-    }
+  int evict_count[L2_SETS];
+  for (int i = 0; i < L2_SETS; i++) {
+    evict_count[i] = 0;
+  }
 
-    int num_reps = 100;
-    for (int rep = 0; rep < num_reps; rep++) {
-        for (int set = 0; set < L2_SETS; set++) {
-            if (prime_probe_l2_set(set, buf)) {
-                evict_count[set]++;
-            }
-        }
-    }
+  cache_line* cache_head = setup_cache(L2_WAYS, L2_SETS);
 
-
-    int max_val = 2;
-    int max_set = -1;
+  int num_reps = 100;
+  for (int rep = 0; rep < num_reps; rep++) {
     for (int set = 0; set < L2_SETS; set++) {
-      uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
-//      if(evict_count[set] > 995) {
-        printf(" set addr = %ld, set number = %d , evict_count = %d\n",addr, set, evict_count[set]);
-//      }
-
-      if (evict_count[set] > max_val) {
-        max_val = evict_count[set];
-        max_set = set;
-        uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
-        printBinary(addr);
-        printf(" set addr = %ld, set number = %d , evict_count = %d\n",addr, set, evict_count[set]);
+      if (prime_probe_l2_set(set, buf)) {
+        evict_count[set]++;
       }
     }
-    printf("Vault code: %d (%d)\n", max_set, max_val);
+  }
+
+  free_cache(cache_head);
+
+  int max_val = 2;
+  int max_set = -1;
+  for (int set = 0; set < L2_SETS; set++) {
+    uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
+//      if(evict_count[set] > 995) {
+    printf(" set addr = %ld, set number = %d , evict_count = %d\n",addr, set, evict_count[set]);
+//      }
+
+    if (evict_count[set] > max_val) {
+      max_val = evict_count[set];
+      max_set = set;
+      uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
+      printBinary(addr);
+      printf(" set addr = %ld, set number = %d , evict_count = %d\n",addr, set, evict_count[set]);
+    }
+  }
+  printf("Vault code: %d (%d)\n", max_set, max_val);
 }

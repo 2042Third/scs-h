@@ -21,6 +21,7 @@ struct cache_line {
 
 };
 
-
+cache_line* setup_linked_list(int ways, int sets);
+void free_linked_list(cache_line* head);
 
 #endif //LAB1_15793_LINKED_LIST_H
