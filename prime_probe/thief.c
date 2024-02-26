@@ -99,8 +99,8 @@ int main(int argc, char const *argv[]) {
     curr = cache_head;
     for (int i=0 ; i< L2_SETS*L2_WAYS  ; i++) {
       if(curr->setNum == 63 || curr->setNum == 209 || curr->setNum == 992) {
-        printf("Address = %ld, set %d  timing = %d \n", curr->lineAddr, curr->setNum,
-               curr->timing);
+        printf("Address = %ld, timing = %d set %d  \n", curr->lineAddr, curr->timing,
+               curr->setNum);
       }
       if (curr->timing>135) {
         evict_count[curr->setNum]++;
@@ -117,7 +117,7 @@ int main(int argc, char const *argv[]) {
   for (int set = 0; set < L2_SETS; set++) {
     uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
 //      if(evict_count[set] > 995) {
-    printf(" set addr = %ld, set number = %d , evict_count = %d\n",addr, set, evict_count[set]);
+//    printf(" set addr = %ld, set number = %d , evict_count = %d\n",addr, set, evict_count[set]);
 //      }
 
     if (evict_count[set] > max_val) {
@@ -125,7 +125,7 @@ int main(int argc, char const *argv[]) {
       max_set = set;
       uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
       printBinary(addr);
-//      printf(" set number = %d , evict_count = %d\n", set, evict_count[set]);
+      printf(" set number = %d , evict_count = %d\n", set, evict_count[set]);
     }
   }
   printf("Vault code: %d (%d)\n", max_set, max_val);
