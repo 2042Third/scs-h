@@ -11,9 +11,9 @@
 void serialize();
 void busy_wait_cycles(uint64_t cycles);
 
-static inline uint64_t rdtsc();
-static inline void mfence();
-static inline void cpuid(int code, uint32_t* a, uint32_t* d);
+static inline uint64_t rdtsc()__attribute__((always_inline));
+static inline void mfence()__attribute__((always_inline));
+static inline void cpuid(int code, uint32_t* a, uint32_t* d)__attribute__((always_inline));
 
 // Read the Time Stamp Counter
 static inline uint64_t rdtsc() {
