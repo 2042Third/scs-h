@@ -12,7 +12,7 @@ typedef struct cache_line cache_line;
 
 void serialize();
 void busy_wait_cycles(uint64_t cycles);
-void rand_mem_cpy(cache_line* head, void* mem, size_t size, size_t ways);
+void rand_mem_cpy(cache_line* head, void* mem, size_t size, size_t sets);
 cache_line* setup_cache(int ways, int sets, void* mem);
 void free_cache(cache_line* cache);
 cache_line* recur_prime_cache(cache_line* cache);

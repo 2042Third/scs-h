@@ -26,13 +26,13 @@ void busy_wait_cycles(uint64_t cycles) {
 /**
  * Copy the address of the buffer into the linked list randomly
  * */
-void rand_mem_cpy(cache_line* head, void* mem, size_t size, size_t ways) {
+void rand_mem_cpy(cache_line* head, void* mem, size_t size, size_t sets) {
   cache_line* curr = head;
   char ** arr = (char **) malloc(size * sizeof(set_line_addr*));
   for (int i = 0; i < size; i++) { // copy the address of the buffer into array sequentially
     set_line_addr* cache = (set_line_addr*) malloc(sizeof(set_line_addr));
     cache->lineAddr = (uint64_t) mem+i;
-    cache->setNum = i % ways;
+    cache->setNum = i % sets;
     arr[i] = (char*) cache;
   }
   shuffle((char **) arr, size);
@@ -77,7 +77,7 @@ void probe_cache(cache_line* head) {
  cache_line * setup_cache(int ways, int sets, void* mem) {
    cache_line * head = setup_linked_list(ways, sets);
 
-   rand_mem_cpy(head, mem, ways * sets,ways );
+   rand_mem_cpy(head, mem, ways * sets,sets );
    return head;
  }
 
@@ -90,7 +90,7 @@ void scramble_and_clear_cache (cache_line* cache,int ways, int sets, void* mem) 
       curr->end = 0;
       curr = curr->next;
     }
-  rand_mem_cpy(cache, mem, ways * sets,ways );
+  rand_mem_cpy(cache, mem, ways * sets, sets );
 }
 
  /**
