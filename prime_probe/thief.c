@@ -100,7 +100,7 @@ int main(int argc, char const *argv[]) {
 
   int num_reps = 100;
   for (int rep = 0; rep < num_reps; rep++) {
-    printf("\rPrime+Probe Progress: %4d/%4d", rep, num_reps);
+    printf("\rPrime+Probe Progress: %4d/%4d", rep+1, num_reps);
     fflush(stdout);
 
     scramble_and_clear_cache(cache_head, L2_WAYS, L2_SETS, buf);
@@ -152,16 +152,15 @@ int main(int argc, char const *argv[]) {
   int max_set = -1;
   for (int set = 0; set < L2_SETS; set++) {
     uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
-//      if(evict_count[set] > 995) {
-//    printf(" set addr = %ld, set number = %d , evict_count = %d\n",addr, set, evict_count[set]);
-//      }
 
     if (evict_count[set] > max_val) {
       max_val = evict_count[set];
       max_set = set;
       uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
-      printBinary(addr);
-      printf(" set number = %4d , evict_count = %4d\n", set, evict_count[set]);
+      if (verbose){
+        printBinary(addr);
+        printf(" set number = %4d , evict_count = %4d\n", set, evict_count[set]);
+      }
     }
   }
   printf("Vault code: %d (%d)\n", max_set, max_val);
