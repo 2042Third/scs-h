@@ -112,6 +112,7 @@ int main(int argc, char const *argv[]) {
       uintptr_t address =curr->lineAddr; // Example address
       uintptr_t maskedAndShifted = (address >> 6) & 0x7FF;
 
+      probe_cache( curr,buf);
       wait_and_yield(&duration);
 
       probe_cache( curr,buf);
