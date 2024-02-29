@@ -109,15 +109,16 @@ int main(int argc, char const *argv[]) {
     prime_cache( curr,buf);
     serialize();
     for (int i=0 ; i< L2_SETS ; i++) {
-
+      uintptr_t address =curr->lineAddr; // Example address
+      uintptr_t maskedAndShifted = (address >> 6) & 0x7FF;
 
       wait_and_yield(&duration);
 
       probe_cache( curr,buf);
 
-      sum_cycle[curr->setNum] += curr->timing;
-      if(min_cycle[curr->setNum] > curr->timing) {
-        min_cycle[curr->setNum] = curr->timing;
+      sum_cycle[maskedAndShifted] += curr->timing;
+      if(min_cycle[maskedAndShifted] > curr->timing) {
+        min_cycle[maskedAndShifted] = curr->timing;
       }
       curr = curr->next;
     }
