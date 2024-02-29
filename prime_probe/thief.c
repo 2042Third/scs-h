@@ -77,6 +77,7 @@ int main(int argc, char const *argv[]) {
 
   int evict_count[L2_SETS];
   int min_cycle[L2_SETS];
+  int sum_cycle[L2_SETS];
   for (int i = 0; i < L2_SETS; i++) {
     evict_count[i] = 0;
     min_cycle[i] = 1000;
@@ -102,6 +103,7 @@ int main(int argc, char const *argv[]) {
       wait_and_yield(&duration);
 
       probe_cache( curr);
+      sum_cycle[curr->setNum] += curr->timing;
       if(min_cycle[curr->setNum] > curr->timing) {
         min_cycle[curr->setNum] = curr->timing;
       }
@@ -111,7 +113,7 @@ int main(int argc, char const *argv[]) {
     curr = cache_head;
     for (int i=0 ; i< L2_SETS ; i++) {
 //      if(i == 952 || i== 886) {
-        printf(" timing = %4d set %4d  \n", min_cycle[i],i);
+        printf(" timing = %4d set %4d  sum %4d\n", min_cycle[i],i,sum_cycle[i]);
 //      }
       if (min_cycle[i]>21) {
         evict_count[i]++;
