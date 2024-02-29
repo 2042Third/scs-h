@@ -124,11 +124,11 @@ int main(int argc, char const *argv[]) {
     curr = cache_head;
 
   }
-
+  curr = cache_head;
   for (int i=0 ; i< L2_SETS ; i++) {
-    curr = cache_head;
+
     printf(" timing = %4d set %4d,%4d  avg %4d\n", sum_cycle[i],i,curr->setNum,sum_cycle[i]/num_reps);
-    if (sum_cycle[i]/num_reps>63) {
+    if (sum_cycle[i]/num_reps>50) {
       uintptr_t address =curr->lineAddr; // Example address
       uintptr_t maskedAndShifted = (address >> 6) & 0x7FF;
 
