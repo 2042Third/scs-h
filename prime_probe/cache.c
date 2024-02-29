@@ -81,7 +81,7 @@ void rand_mem_cpy(cache_set* head, void* mem) {
   // Link the nodes
   for (int i = 0; i < total_lines; i++) {
     printf ("allocating into mem= %ld at %4d\n",(uint64_t)mem + i * L2_LINE_SIZE, i);
-    fflush(stdout)  ;
+    fflush(stdout);
     *((uint64_t*)mem + i * L2_LINE_SIZE) = arr[i]->lineAddr;
 
     if(i%L2_WAYS != 0){
