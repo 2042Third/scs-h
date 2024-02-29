@@ -75,20 +75,35 @@ void rand_mem_cpy(cache_set* head, void* mem) {
 
   // Shuffle the lines within each set
   for (int i = 0; i < L2_SETS; i++) {
-    shuffle((void**)(arr + i * L2_WAYS), L2_WAYS);
+    shuffle((cache_set**)(arr + i * L2_WAYS), L2_WAYS);
   }
   printf ("total lines = %ld \n",total_lines);
 
+  int buf_size = 1 << 21; // 2MB
   // Link the nodes
   for (int i = 0; i < total_lines; i++) {
     printf ("allocating into mem= %ld at %4d\n",(uint64_t)mem + i * L2_LINE_SIZE, i);
     fflush(stdout);
-    // Calculate the correct offset in bytes
+    if (i >= buf_size / L2_LINE_SIZE) {
+      fprintf(stderr, "Error: Attempt to write beyond buffer bounds.\n");
+      break;
+    }
+
     uint64_t offset = i * L2_LINE_SIZE;
+    if (offset >= buf_size) {
+      fprintf(stderr, "Error: Offset exceeds buffer size.\n");
+      break;
+    }
+
     uint64_t *ptr = (uint64_t *)((char *)mem + offset);
 
-    // Store the address
-    *ptr = (uint64_t)(arr[i]->lineAddr);
+    // Ensure arr[i] is valid
+    if (arr[i] == NULL) {
+      fprintf(stderr, "Error: arr[%d] is NULL.\n", i);
+      break;
+    }
+
+    *ptr = arr[i]->lineAddr;
 
     if(i%L2_WAYS != 0){
       continue;
