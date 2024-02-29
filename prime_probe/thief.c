@@ -76,11 +76,9 @@ int main(int argc, char const *argv[]) {
   *((uint64_t *)buf) = 5;
 
   int evict_count[L2_SETS];
-  int min_cycle[L2_SETS];
   int sum_cycle[L2_SETS];
   for (int i = 0; i < L2_SETS; i++) {
     evict_count[i] = 0;
-    min_cycle[i] = 1000;
   }
 
   cache_set* cache_head = setup_cache(L2_WAYS, L2_SETS, buf);
@@ -95,7 +93,7 @@ int main(int argc, char const *argv[]) {
 
   int num_reps = 100;
   for (int rep = 0; rep < num_reps; rep++) {
-    printf("\rProgress: %4d/%4d", rep, num_reps);
+    printf("\rPrime+Probe Progress: %4d/%4d", rep, num_reps);
     fflush(stdout);
 
     scramble_and_clear_cache(cache_head, L2_WAYS, L2_SETS, buf);
@@ -106,23 +104,16 @@ int main(int argc, char const *argv[]) {
 
       curr2 = curr2->next;
     }
-//    serialize();
-
     curr = cache_head;
-//    prime_cache( curr,buf);
-//    serialize();
     for (int i=0 ; i< L2_SETS ; i++) {
       uintptr_t address =curr->lineAddr; // Example address
       uintptr_t maskedAndShifted = (address >> 6) & 0x7FF;
-
       probe_cache( curr,buf);
       wait_and_yield(&duration);
-
       probe_cache( curr,buf);
-
       sum_cycle[maskedAndShifted] += curr->timing;
-      if(min_cycle[maskedAndShifted] > curr->timing) {
-        min_cycle[maskedAndShifted] = curr->timing;
+      if(curr->timing> 60){
+        evict_count[maskedAndShifted]++;
       }
       curr = curr->next;
     }
@@ -140,7 +131,7 @@ int main(int argc, char const *argv[]) {
       printf("Original address: 0x%lx\n", address);
       printf("Extracted bits: %ld\n", maskedAndShifted);
 
-      evict_count[i]++;
+      evict_count[i]++; // another eviction voting for average.
     }
     curr = curr->next;
   }
