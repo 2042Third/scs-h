@@ -93,7 +93,7 @@ int main(int argc, char const *argv[]) {
   lduration.tv_sec = 0;  // seconds
   lduration.tv_nsec = 1000000;  // nanoseconds
 
-  int num_reps = 10;
+  int num_reps = 5;
   for (int rep = 0; rep < num_reps; rep++) {
     scramble_and_clear_cache(cache_head, L2_WAYS, L2_SETS, buf);
 
@@ -103,6 +103,9 @@ int main(int argc, char const *argv[]) {
 
       curr2 = curr2->next;
     }
+    serialize();
+
+    prime_cache( curr2,buf);
     serialize();
     for (int i=0 ; i< L2_SETS ; i++) {
 
