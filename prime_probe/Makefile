@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-O0 -I /usr/local -static
+CFLAGS=-O0 -I /usr/local -static -g
 VAULT_CPU=2
 THIEF_CPU=3
 
