@@ -109,7 +109,7 @@ void rand_mem_cpy(cache_set* head, void* mem) {
     }
     curr->lineAddr = arr[i]->lineAddr;
     curr->setNum = arr[i]->setNum;
-    printf(" timing = %4d set %4d,%4d \n", curr->lineAddr,i,curr->setNum,);
+    printf(" timing = %4d set %4d,%4d \n", curr->lineAddr,i,curr->setNum);
 
     curr = curr->next;
   }
