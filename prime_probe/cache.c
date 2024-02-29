@@ -109,11 +109,7 @@ void rand_mem_cpy(cache_set* head, void* mem) {
     }
     curr->lineAddr = arr[i]->lineAddr;
     curr->setNum = arr[i]->setNum;
-    if (i < total_lines - 1) {
-      curr->next = arr[i + 1];
-    } else {
-      curr->next = NULL;
-    }
+
     curr = curr->next;
   }
 
@@ -153,9 +149,6 @@ void scramble_and_clear_cache (cache_set* cache, int ways, int sets, void* mem) 
       curr->setNum = 0;
       curr->start = 0;
       curr->end = 0;
-      if (curr->next == NULL) {
-        break;
-      }
       curr = curr->next;
 
     }
