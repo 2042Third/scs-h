@@ -77,6 +77,7 @@ void rand_mem_cpy(cache_set* head, void* mem) {
   for (int i = 0; i < L2_SETS; i++) {
     shuffle((void**)(arr + i * L2_WAYS), L2_WAYS);
   }
+  printf ("total lines = %ld \n",total_lines);
 
   // Link the nodes
   for (int i = 0; i < total_lines; i++) {
