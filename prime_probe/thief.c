@@ -111,7 +111,7 @@ int main(int argc, char const *argv[]) {
     curr = cache_head;
     for (int i=0 ; i< L2_SETS ; i++) {
 //      if(i == 952 || i== 886) {
-        printf(" timing = %d set %d  \n", min_cycle[i],i);
+        printf(" timing = %4d set %4d  \n", min_cycle[i],i);
 //      }
       if (min_cycle[i]>21) {
         evict_count[i]++;
@@ -134,7 +134,7 @@ int main(int argc, char const *argv[]) {
       max_set = set;
       uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
       printBinary(addr);
-      printf(" set number = %d , evict_count = %d\n", set, evict_count[set]);
+      printf(" set number = %4d , evict_count = %4d\n", set, evict_count[set]);
     }
   }
   printf("Vault code: %d (%d)\n", max_set, max_val);
