@@ -113,7 +113,7 @@ int main(int argc, char const *argv[]) {
 
   for (int i=0 ; i< L2_SETS ; i++) {
 //      if(i == 952 || i== 886) {
-    printf(" timing = %4d set %4d  sum %4d\n", sum_cycle[i],i,min_cycle[i]);
+    printf(" timing = %4d set %4d  avg %4d\n", sum_cycle[i],i,sum_cycle[i]/num_reps);
 //      }
     if (min_cycle[i]>21) {
       evict_count[i]++;
