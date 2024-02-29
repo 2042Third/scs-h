@@ -66,7 +66,7 @@ void rand_mem_cpy(cache_set* head, void* mem) {
   size_t total_lines = L2_SETS * L2_WAYS;
 
   cache_set **arr = (cache_set**) malloc(total_lines * sizeof(cache_set*));
-  for (int i = 0; i < total_lines; i++) {
+  for (int i = 0; i < total_lines-1; i++) {
     // Here the cache_set structs are used to store the *line* *address* and set number
     arr[i] = (cache_set*) malloc(sizeof(cache_set));
     arr[i]->lineAddr = (uint64_t)mem + i * L2_LINE_SIZE;
@@ -81,7 +81,7 @@ void rand_mem_cpy(cache_set* head, void* mem) {
 
   int buf_size = 1 << 21; // 2MB
   // Link the nodes
-  for (int i = 0; i < total_lines; i++) {
+  for (int i = 0; i < total_lines-1; i++) {
     printf ("allocating into mem= %ld at %4d\n",(uint64_t)mem + i * L2_LINE_SIZE, i);
     fflush(stdout);
     if (i >= buf_size / L2_LINE_SIZE) {
