@@ -128,7 +128,8 @@ void prime_cache(cache_set* head, void*buf) {
 }
 
 void probe_cache(cache_set* head, void*buf) {
-  head->timing = measure_set_access_time(head->lineAddr);
+//  head->timing = measure_set_access_time(head->lineAddr);
+  head->timing = measure_line_access_time(head->lineAddr);
 //  serialize();
 }
 
