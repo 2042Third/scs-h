@@ -133,7 +133,7 @@ int main(int argc, char const *argv[]) {
       uintptr_t maskedAndShifted = (address >> 5) & 0xFFF;
 
       printf("Original address: 0x%lx\n", address);
-      printf("Extracted bits: 0x%lx\n", maskedAndShifted);
+      printf("Extracted bits: %ld\n", maskedAndShifted);
 
     }
     if (min_cycle[i]>21) {
