@@ -108,13 +108,15 @@ int main(int argc, char const *argv[]) {
     }
 
     curr = cache_head;
-    for (int i=0 ; i< L2_SETS ; i++) {
+
+  }
+
+  for (int i=0 ; i< L2_SETS ; i++) {
 //      if(i == 952 || i== 886) {
-        printf(" timing = %4d set %4d  sum %4d\n", min_cycle[i],i,sum_cycle[i]);
+    printf(" timing = %4d set %4d  sum %4d\n", min_cycle[i],i,sum_cycle[i]);
 //      }
-      if (min_cycle[i]>21) {
-        evict_count[i]++;
-      }
+    if (min_cycle[i]>21) {
+      evict_count[i]++;
     }
   }
 
