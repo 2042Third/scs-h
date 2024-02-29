@@ -32,7 +32,7 @@ void rand_mem_cpy(cache_line* head, void* mem, size_t size, size_t sets) {
   char ** arr = (char **) malloc(size * sizeof(set_line_addr*));
   for (int i = 0; i < size; i++) { // copy the address of the buffer into array sequentially
     set_line_addr* cache = (set_line_addr*) malloc(sizeof(set_line_addr));
-    cache->lineAddr = (uint64_t) mem+i;
+    cache->lineAddr = (uint64_t) mem+i * L2_WAYS * L2_LINE_SIZE;
     cache->setNum = i % sets;
     arr[i] = (char*) cache;
   }
@@ -59,7 +59,10 @@ void prime_cache(cache_line* head,void*buf) {
   uint64_t addr = (uint64_t) (buf + (head->setNum * L2_WAYS * L2_LINE_SIZE));
   serialize();
   (*((char *)head->lineAddr)) ++;
-  (*((char *)addr)) ++;
+
+  for (int i = 0; i < L2_WAYS; i++) {
+    (*((char *)addr+i)) ++;
+  }
   mfence();
   serialize();
 }
@@ -76,10 +79,10 @@ void probe_cache(cache_line* head) {
  * Create the cache linked list
  * */
  cache_line * setup_cache(int ways, int sets, void* mem) {
-   cache_line * head = setup_linked_list(ways, sets);
-
-   rand_mem_cpy(head, mem, ways * sets,sets );
-   return head;
+  cache_line * head = setup_linked_list(ways, sets);
+//  rand_mem_cpy(head, mem, ways * sets,sets );
+  rand_mem_cpy(head, mem,  sets,sets );
+  return head;
  }
 
 void scramble_and_clear_cache (cache_line* cache,int ways, int sets, void* mem) {
@@ -91,7 +94,8 @@ void scramble_and_clear_cache (cache_line* cache,int ways, int sets, void* mem) 
       curr->end = 0;
       curr = curr->next;
     }
-  rand_mem_cpy(cache, mem, ways * sets, sets );
+//  rand_mem_cpy(cache, mem, ways * sets, sets );
+  rand_mem_cpy(cache, mem, sets, sets );
 }
 
  /**

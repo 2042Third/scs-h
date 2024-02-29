@@ -96,12 +96,9 @@ int main(int argc, char const *argv[]) {
   int num_reps = 1;
   for (int rep = 0; rep < num_reps; rep++) {
     scramble_and_clear_cache(cache_head, L2_WAYS, L2_SETS, buf);
-    for (int i=0 ; i< L2_SETS*L2_WAYS ; i++) {
+    for (int i=0 ; i< L2_SETS ; i++) {
       prime_cache( curr,buf);
-//      busy_wait_cycles(40);
-
       wait_and_yield(&duration);
-
       probe_cache( curr);
       sum_cycle[curr->setNum] += curr->timing;
       if(min_cycle[curr->setNum] > curr->timing) {
