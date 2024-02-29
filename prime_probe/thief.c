@@ -126,12 +126,20 @@ int main(int argc, char const *argv[]) {
   }
 
   for (int i=0 ; i< L2_SETS ; i++) {
-//      if(i == 952 || i== 886) {
-    printf(" timing = %4d set %4d  avg %4d\n", sum_cycle[i],i,sum_cycle[i]/num_reps);
-//      }
+    curr = cache_head;
+    printf(" timing = %4d set %4d,%4d  avg %4d\n", sum_cycle[i],i,curr->setNum,sum_cycle[i]/num_reps);
+    if (sum_cycle[i]/num_reps>1000) {
+      uintptr_t address =curr->lineAddr; // Example address
+      uintptr_t maskedAndShifted = (address >> 5) & 0xFFF;
+
+      printf("Original address: 0x%lx\n", address);
+      printf("Extracted bits: 0x%lx\n", maskedAndShifted);
+
+    }
     if (min_cycle[i]>21) {
       evict_count[i]++;
     }
+    curr = curr->next;
   }
 
   free_cache(cache_head);
