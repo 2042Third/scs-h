@@ -7,6 +7,40 @@
 #include "util.h"
 #include "params.h"
 
+uint32_t measure_set_access_time(uint64_t addr)
+{
+  uint32_t cycles;
+
+  asm volatile("mov %1, %%r8\n\t"
+               "lfence\n\t"
+               "rdtsc\n\t"
+               "mov %%eax, %%edi\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "mov (%%r8), %%r8\n\t"
+               "lfence\n\t"
+               "rdtsc\n\t"
+               "sub %%edi, %%eax\n\t"
+      : "=a"(cycles) /*output*/
+      : "r"(addr)
+      : "r8", "edi");
+
+  return cycles;
+}
+
 // Function to use cpuid for serialization
 void serialize() {
   uint32_t eax, edx;
@@ -27,66 +61,70 @@ void busy_wait_cycles(uint64_t cycles) {
 /**
  * Copy the address of the buffer into the linked list randomly
  * */
-void rand_mem_cpy(cache_line* head, void* mem, size_t size, size_t sets) {
-  cache_line* curr = head;
-  char ** arr = (char **) malloc(size * sizeof(set_line_addr*));
-  for (int i = 0; i < size; i++) { // copy the address of the buffer into array sequentially
-    set_line_addr* cache = (set_line_addr*) malloc(sizeof(set_line_addr));
-    cache->lineAddr = (uint64_t) mem+i * L2_WAYS * L2_LINE_SIZE;
-    cache->setNum = i ;
-    arr[i] = (char*) cache;
+void rand_mem_cpy(cache_set* head, void* mem) {
+  cache_set* curr = head;
+  size_t total_lines = L2_SETS * L2_WAYS;
+
+  cache_set **arr = (cache_set**) malloc(total_lines * sizeof(cache_set*));
+  for (int i = 0; i < total_lines; i++) {
+    // Here the cache_set structs are used to store the *line* *address* and set number
+    arr[i] = (cache_set*) malloc(sizeof(cache_set));
+    arr[i]->lineAddr = (uint64_t)mem + i * L2_LINE_SIZE;
+    arr[i]->setNum = i / L2_WAYS; // Set number for this line
   }
-  shuffle((char **) arr, size);
-  for (int i = 0; i < size; i++) {
-    set_line_addr* cache = (set_line_addr*) arr[i];
-    curr->lineAddr = cache->lineAddr;
-    curr->setNum = cache->setNum;
+
+  // Shuffle the lines within each set
+  for (int i = 0; i < L2_SETS; i++) {
+    shuffle((void**)(arr + i * L2_WAYS), L2_WAYS);
+  }
+
+  // Link the nodes
+  for (int i = 0; i < total_lines; i++) {
+
+    *((uint64_t*)mem + i * L2_LINE_SIZE) = arr[i]->lineAddr;
+    if(i%L2_WAYS != 0){
+      continue;
+    }
+    curr->lineAddr = arr[i]->lineAddr;
+    curr->setNum = arr[i]->setNum;
+    if (i < total_lines - 1) {
+      curr->next = arr[i + 1];
+    } else {
+      curr->next = NULL;
+    }
     curr = curr->next;
+  }
+
+  // Free the temporary array elements and array
+  for (int i = 0; i < total_lines; i++) {
+    free(arr[i]);
   }
   free(arr);
 }
-cache_line* recur_prime_cache(cache_line* cache){
-  serialize();
-//  cache->start = rdtsc();
-  (*((char *)cache->lineAddr)) ++;
-  mfence();
-//  cache->end = rdtscp();
-  serialize();
-  return cache->next;
+
+
+void prime_cache(cache_set* head, void*buf) {
+
+  measure_set_access_time(head->lineAddr);
 }
 
-void prime_cache(cache_line* head,void*buf) {
-  uint64_t addr = (uint64_t) (buf + (head->setNum * L2_WAYS * L2_LINE_SIZE));
-  serialize();
-  (*((char *)head->lineAddr)) ++;
-
-  for (int i = 0; i < L2_WAYS; i++) {
-    (*((char *)addr+i*L2_LINE_SIZE)) ++;
-  }
-  mfence();
-  serialize();
-}
-
-void probe_cache(cache_line* head,void*buf) {
+void probe_cache(cache_set* head, void*buf) {
+  head->timing = measure_set_access_time(head->lineAddr);
 //  serialize();
-  head->timing = measure_line_access_time((uint64_t) buf + (head->setNum * L2_WAYS * L2_LINE_SIZE));
-
-//  serialize();
-//  head->timing = head->end - head->start;
 }
 
 /**
  * Create the cache linked list
  * */
- cache_line * setup_cache(int ways, int sets, void* mem) {
-  cache_line * head = setup_linked_list(ways, sets);
+ cache_set * setup_cache(int ways, int sets, void* mem) {
+  cache_set * head = setup_linked_list( sets);
 //  rand_mem_cpy(head, mem, ways * sets,sets );
-  rand_mem_cpy(head, mem,  sets,sets );
+  rand_mem_cpy(head, mem );
   return head;
  }
 
-void scramble_and_clear_cache (cache_line* cache,int ways, int sets, void* mem) {
-   cache_line * curr = cache;
+void scramble_and_clear_cache (cache_set* cache, int ways, int sets, void* mem) {
+   cache_set * curr = cache;
     while (curr != NULL) {
       curr->lineAddr = 0;
       curr->setNum = 0;
@@ -95,13 +133,13 @@ void scramble_and_clear_cache (cache_line* cache,int ways, int sets, void* mem) 
       curr = curr->next;
     }
 //  rand_mem_cpy(cache, mem, ways * sets, sets );
-  rand_mem_cpy(cache, mem, sets, sets );
+  rand_mem_cpy(cache, mem );
 }
 
  /**
   * Free the linked list cache
   * */
-  void free_cache(cache_line * cache) {
+  void free_cache(cache_set * cache) {
     free_linked_list(cache);
   }
 

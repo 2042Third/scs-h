@@ -7,12 +7,12 @@
 /**
  * Setup the linked list
  * */
-cache_line* setup_linked_list(int ways, int sets) {
-  cache_line* head = (cache_line *)malloc(sizeof(cache_line));
-  cache_line* current = head;
-  cache_line * prev = NULL;
-  for (int i = 0; i < sets * ways - 1; i++) {
-    current->next = (cache_line *)malloc(sizeof(cache_line));
+cache_set* setup_linked_list( int sets) {
+  cache_set* head = (cache_set *)malloc(sizeof(cache_set));
+  cache_set* current = head;
+  cache_set * prev = NULL;
+  for (int i = 0; i < sets - 1; i++) {
+    current->next = (cache_set *)malloc(sizeof(cache_set));
     current->prev = prev;
     prev = current;
     current = current->next;
@@ -26,9 +26,9 @@ cache_line* setup_linked_list(int ways, int sets) {
 /**
  * Free the linked list
  * */
-void free_linked_list(cache_line* head) {
-  cache_line* current = head;
-  cache_line* next;
+void free_linked_list(cache_set* head) {
+  cache_set* current = head;
+  cache_set* next;
   while (current != NULL) {
     next = current->next;
     free(current);

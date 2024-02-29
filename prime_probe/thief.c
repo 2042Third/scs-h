@@ -32,7 +32,7 @@ void printBinary(uint64_t num) {
 // you might want to consider adding some delay between steps
 // finally you need to traverse the list one more time to retrieve 
 // the time measurements
-bool prime_probe_l2_set(int set, char *buf, cache_line* curr) {
+bool prime_probe_l2_set(int set, char *buf, cache_set* curr) {
   bool found = false;
   uint64_t addr = (uint64_t) (buf + (set * L2_WAYS * L2_LINE_SIZE));
   uint32_t timing;
@@ -73,7 +73,7 @@ int main(int argc, char const *argv[]) {
     perror("posix_memalign");
   }
   madvise(buf, buf_size, MADV_HUGEPAGE);
-  *((char *)buf) = 5;
+  *((uint64_t *)buf) = 5;
 
   int evict_count[L2_SETS];
   int min_cycle[L2_SETS];
@@ -83,8 +83,8 @@ int main(int argc, char const *argv[]) {
     min_cycle[i] = 1000;
   }
 
-  cache_line* cache_head = setup_cache(L2_WAYS, L2_SETS, buf);
-  cache_line* curr = cache_head;
+  cache_set* cache_head = setup_cache(L2_WAYS, L2_SETS, buf);
+  cache_set* curr = cache_head;
 
   struct timespec duration;
   duration.tv_sec = 0;  // seconds
@@ -100,6 +100,7 @@ int main(int argc, char const *argv[]) {
       prime_cache( curr,buf);
       wait_and_yield(&duration);
       probe_cache( curr,buf);
+
       sum_cycle[curr->setNum] += curr->timing;
       if(min_cycle[curr->setNum] > curr->timing) {
         min_cycle[curr->setNum] = curr->timing;

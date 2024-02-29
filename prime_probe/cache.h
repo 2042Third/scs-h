@@ -8,19 +8,20 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-typedef struct cache_line cache_line;
+typedef struct cache_set cache_set;
 
 void serialize();
 void busy_wait_cycles(uint64_t cycles);
-void rand_mem_cpy(cache_line* head, void* mem, size_t size, size_t sets);
-cache_line* setup_cache(int ways, int sets, void* mem);
-void free_cache(cache_line* cache);
-cache_line* recur_prime_cache(cache_line* cache);
-void prime_cache(cache_line* cache,void*buf);
-void probe_cache(cache_line* cache,void*buf);
-void scramble_and_clear_cache(cache_line* cache,int ways, int sets, void* mem);
+void rand_mem_cpy(cache_set* head, void* mem);
+cache_set* setup_cache(int ways, int sets, void* mem);
+void free_cache(cache_set* cache);
+cache_set* recur_prime_cache(cache_set* cache);
+void prime_cache(cache_set* cache, void*buf);
+void probe_cache(cache_set* cache, void*buf);
+void scramble_and_clear_cache(cache_set* cache, int ways, int sets, void* mem);
 
 static inline uint64_t rdtsc()__attribute__((always_inline));
+static inline uint32_t measure_set_access_time(uint64_t addr)__attribute__((always_inline));
 static inline uint64_t rdtscp()__attribute__((always_inline));
 static inline void mfence()__attribute__((always_inline));
 static inline void cpuid(int code, uint32_t* a, uint32_t* d)__attribute__((always_inline));

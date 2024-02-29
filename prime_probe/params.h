@@ -14,5 +14,5 @@
 #define L1_LINE_SIZE 64
 
 #define L2_WAYS 16
-#define L2_SETS 1024
+#define L2_SETS 2048
 #define L2_LINE_SIZE 64
