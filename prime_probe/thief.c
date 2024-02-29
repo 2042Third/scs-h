@@ -110,9 +110,9 @@ int main(int argc, char const *argv[]) {
 
     curr = cache_head;
     for (int i=0 ; i< L2_SETS ; i++) {
-      if(i == 952 || i== 886) {
+//      if(i == 952 || i== 886) {
         printf(" timing = %d set %d  \n", min_cycle[i],i);
-      }
+//      }
       if (min_cycle[i]>21) {
         evict_count[i]++;
       }
