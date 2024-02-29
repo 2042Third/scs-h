@@ -66,11 +66,15 @@ void rand_mem_cpy(cache_set* head, void* mem) {
   int total_lines = L2_SETS * L2_WAYS;
 
   cache_set **arr = (cache_set**) malloc(total_lines * sizeof(cache_set*));
-  for (int i = 0; i < total_lines; i++) {
-    // Here the cache_set structs are used to store the *line* *address* and set number
-    arr[i] = (cache_set*) malloc(sizeof(cache_set));
-    arr[i]->lineAddr = (uint64_t)mem + i * L2_LINE_SIZE;
-    arr[i]->setNum = i / L2_WAYS; // Set number for this line
+  for (int set = 0; set < L2_SETS; set++) {
+    for (int way = 0; way < L2_WAYS; way++) {
+      uint64_t offset =  (1 << 17) * way + set * L2_LINE_SIZE;
+      // Allocate memory for each line (cache_set struct)
+      // Here the cache_set structs are used to store the *line* *address* and set number
+      arr[set*L2_WAYS + way] = (cache_set*) malloc(sizeof(cache_set));
+      arr[set*L2_WAYS + way]->lineAddr = (uint64_t)mem+ offset;
+      arr[set*L2_WAYS + way]->setNum = set ; // Set number for this line
+    }
   }
 
   // Shuffle the lines within each set
