@@ -93,8 +93,11 @@ int main(int argc, char const *argv[]) {
   lduration.tv_sec = 0;  // seconds
   lduration.tv_nsec = 1000000;  // nanoseconds
 
-  int num_reps = 1000;
+  int num_reps = 100;
   for (int rep = 0; rep < num_reps; rep++) {
+    printf("\rProgress: %4d/%4d", rep, num_reps);
+    fflush(stdout);
+
     scramble_and_clear_cache(cache_head, L2_WAYS, L2_SETS, buf);
 
     cache_set* curr2 = cache_head;
@@ -103,11 +106,11 @@ int main(int argc, char const *argv[]) {
 
       curr2 = curr2->next;
     }
-    serialize();
+//    serialize();
 
     curr = cache_head;
-    prime_cache( curr,buf);
-    serialize();
+//    prime_cache( curr,buf);
+//    serialize();
     for (int i=0 ; i< L2_SETS ; i++) {
       uintptr_t address =curr->lineAddr; // Example address
       uintptr_t maskedAndShifted = (address >> 6) & 0x7FF;
