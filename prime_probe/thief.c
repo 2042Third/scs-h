@@ -127,6 +127,8 @@ int main(int argc, char const *argv[]) {
     curr = cache_head;
 
   }
+  printf("\n");
+
   curr = cache_head;
   for (int i=0 ; i< L2_SETS ; i++) {
     if(verbose)
