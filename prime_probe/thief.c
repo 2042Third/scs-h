@@ -103,7 +103,7 @@ int main(int argc, char const *argv[]) {
 
       curr2 = curr2->next;
     }
-
+    serialize();
     for (int i=0 ; i< L2_SETS ; i++) {
 
 
