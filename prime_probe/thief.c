@@ -87,12 +87,12 @@ int main(int argc, char const *argv[]) {
 
   struct timespec duration;
   duration.tv_sec = 0;  // seconds
-  duration.tv_nsec = 500;  // nanoseconds
+  duration.tv_nsec = 5000;  // nanoseconds
   struct timespec lduration;
   lduration.tv_sec = 0;  // seconds
   lduration.tv_nsec = 1000000;  // nanoseconds
 
-  int num_reps = 100;
+  int num_reps = 1;
   for (int rep = 0; rep < num_reps; rep++) {
     scramble_and_clear_cache(cache_head, L2_WAYS, L2_SETS, buf);
     for (int i=0 ; i< L2_SETS*L2_WAYS ; i++) {
