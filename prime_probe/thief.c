@@ -130,7 +130,7 @@ int main(int argc, char const *argv[]) {
     printf(" timing = %4d set %4d,%4d  avg %4d\n", sum_cycle[i],i,curr->setNum,sum_cycle[i]/num_reps);
     if (sum_cycle[i]/num_reps>1000) {
       uintptr_t address =curr->lineAddr; // Example address
-      uintptr_t maskedAndShifted = (address >> 5) & 0xFFF;
+      uintptr_t maskedAndShifted = (address >> 6) & 0x7FF;
 
       printf("Original address: 0x%lx\n", address);
       printf("Extracted bits: %ld\n", maskedAndShifted);
