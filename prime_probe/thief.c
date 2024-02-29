@@ -137,8 +137,6 @@ int main(int argc, char const *argv[]) {
       printf("Original address: 0x%lx\n", address);
       printf("Extracted bits: %ld\n", maskedAndShifted);
 
-    }
-    if (min_cycle[i]>21) {
       evict_count[i]++;
     }
     curr = curr->next;
