@@ -13,6 +13,7 @@
 #include "cache.h"
 #include "linked_list.h"
 #include <time.h>
+#include <string.h>
 
 void printBinary(uint64_t num) {
   for (int i = 63; i >= 0; i--) {
@@ -67,6 +68,12 @@ void wait_and_yield(const struct timespec *duration) {
 
 
 int main(int argc, char const *argv[]) {
+  int verbose = 0; // Default value for verbose is 0
+  for (int i = 1; i < argc; i++) {
+    if (strcmp(argv[i], "-v") == 0) {
+      verbose = 1; // Set verbose to 1 if "-v" is found
+    }
+  }
   void *buf = NULL;
   int buf_size = 1 << 21;
   if (posix_memalign(&buf, 1 << 21, buf_size)) { // Allocates 2MB aligned memory, begins at 0x200000
@@ -86,7 +93,7 @@ int main(int argc, char const *argv[]) {
 
   struct timespec duration;
   duration.tv_sec = 0;  // seconds
-  duration.tv_nsec = 5000;  // nanoseconds
+  duration.tv_nsec = 500;  // nanoseconds
   struct timespec lduration;
   lduration.tv_sec = 0;  // seconds
   lduration.tv_nsec = 1000000;  // nanoseconds
@@ -122,14 +129,15 @@ int main(int argc, char const *argv[]) {
   }
   curr = cache_head;
   for (int i=0 ; i< L2_SETS ; i++) {
-
-    printf(" timing = %4d set %4d,%4d  avg %4d\n", sum_cycle[i],i,curr->setNum,sum_cycle[i]/num_reps);
+    if(verbose)
+      printf(" timing = %4d set %4d,%4d  avg %4d\n", sum_cycle[i],i,curr->setNum,sum_cycle[i]/num_reps);
     if (sum_cycle[i]/num_reps>50) {
       uintptr_t address =curr->lineAddr; // Example address
       uintptr_t maskedAndShifted = (address >> 6) & 0x7FF;
-
-      printf("Original address: 0x%lx\n", address);
-      printf("Extracted bits: %ld\n", maskedAndShifted);
+      if(verbose) {
+        printf("Original address: 0x%lx\n", address);
+        printf("Extracted bits: %ld\n", maskedAndShifted);
+      }
 
       evict_count[i]++; // another eviction voting for average.
     }
