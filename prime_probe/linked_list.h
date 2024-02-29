@@ -16,8 +16,6 @@ struct cache_set {
     cache_set *next;
     cache_set *prev;
 
-    uint32_t start;
-    uint32_t end;
     uint32_t timing;
 
     uint16_t setNum;
