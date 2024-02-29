@@ -105,7 +105,8 @@ int main(int argc, char const *argv[]) {
     }
     serialize();
 
-    prime_cache( curr2,buf);
+    curr = cache_head;
+    prime_cache( curr,buf);
     serialize();
     for (int i=0 ; i< L2_SETS ; i++) {
 
