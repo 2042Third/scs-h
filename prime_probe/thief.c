@@ -101,7 +101,7 @@ int main(int argc, char const *argv[]) {
     for (int i=0 ; i< L2_SETS ; i++) {
 
       cache_set* curr2 = cache_head;
-      for (int f=0 ; i< L2_SETS ; f++) {
+      for (int f=0 ; f< L2_SETS ; f++) {
         prime_cache( curr2,buf);
 
         curr2 = curr2->next;
