@@ -99,7 +99,7 @@ int main(int argc, char const *argv[]) {
     for (int i=0 ; i< L2_SETS ; i++) {
       prime_cache( curr,buf);
       wait_and_yield(&duration);
-      probe_cache( curr);
+      probe_cache( curr,buf);
       sum_cycle[curr->setNum] += curr->timing;
       if(min_cycle[curr->setNum] > curr->timing) {
         min_cycle[curr->setNum] = curr->timing;
