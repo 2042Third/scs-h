@@ -97,15 +97,16 @@ int main(int argc, char const *argv[]) {
   for (int rep = 0; rep < num_reps; rep++) {
     scramble_and_clear_cache(cache_head, L2_WAYS, L2_SETS, buf);
 
+    cache_set* curr2 = cache_head;
+    for (int f=0 ; f< L2_SETS ; f++) {
+      prime_cache( curr2,buf);
+
+      curr2 = curr2->next;
+    }
 
     for (int i=0 ; i< L2_SETS ; i++) {
 
-      cache_set* curr2 = cache_head;
-      for (int f=0 ; f< L2_SETS ; f++) {
-        prime_cache( curr2,buf);
 
-        curr2 = curr2->next;
-      }
       wait_and_yield(&duration);
 
       probe_cache( curr,buf);
