@@ -82,8 +82,7 @@ void rand_mem_cpy(cache_set* head, void* mem) {
   int buf_size = 1 << 21; // 2MB
   // Link the nodes
   for (int i = 0; i < total_lines; i++) {
-    printf ("allocating into mem= %ld at %4d\n",(uint64_t)mem + i * L2_LINE_SIZE, i);
-    fflush(stdout);
+
     if (i >= buf_size / L2_LINE_SIZE) {
       fprintf(stderr, "Error: Attempt to write beyond buffer bounds.\n");
       break;
@@ -147,13 +146,18 @@ void probe_cache(cache_set* head, void*buf) {
  }
 
 void scramble_and_clear_cache (cache_set* cache, int ways, int sets, void* mem) {
+
    cache_set * curr = cache;
     while (curr != NULL) {
       curr->lineAddr = 0;
       curr->setNum = 0;
       curr->start = 0;
       curr->end = 0;
+      if (curr->next == NULL) {
+        break;
+      }
       curr = curr->next;
+
     }
 //  rand_mem_cpy(cache, mem, ways * sets, sets );
   rand_mem_cpy(cache, mem );
