@@ -33,7 +33,7 @@ void rand_mem_cpy(cache_line* head, void* mem, size_t size, size_t sets) {
   for (int i = 0; i < size; i++) { // copy the address of the buffer into array sequentially
     set_line_addr* cache = (set_line_addr*) malloc(sizeof(set_line_addr));
     cache->lineAddr = (uint64_t) mem+i * L2_WAYS * L2_LINE_SIZE;
-    cache->setNum = i % sets;
+    cache->setNum = i ;
     arr[i] = (char*) cache;
   }
   shuffle((char **) arr, size);
@@ -61,15 +61,15 @@ void prime_cache(cache_line* head,void*buf) {
   (*((char *)head->lineAddr)) ++;
 
   for (int i = 0; i < L2_WAYS; i++) {
-    (*((char *)addr+i)) ++;
+    (*((char *)addr+i*L2_LINE_SIZE)) ++;
   }
   mfence();
   serialize();
 }
 
-void probe_cache(cache_line* head) {
+void probe_cache(cache_line* head,void*buf) {
 //  serialize();
-  head->timing = measure_line_access_time(head->lineAddr);
+  head->timing = measure_line_access_time((uint64_t) buf + (head->setNum * L2_WAYS * L2_LINE_SIZE));
 
 //  serialize();
 //  head->timing = head->end - head->start;
