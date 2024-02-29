@@ -98,10 +98,12 @@ int main(int argc, char const *argv[]) {
   lduration.tv_sec = 0;  // seconds
   lduration.tv_nsec = 1000000;  // nanoseconds
 
-  printf("\n");
+  printf("L2_WAYS = %d\n", L2_WAYS);
+  printf("L2_SETS = %d\n", L2_SETS);
+  printf("L2_LINE_SIZE = %d\n", L2_LINE_SIZE);
   int num_reps = 100;
   for (int rep = 0; rep < num_reps; rep++) {
-    printf("\rPrime+Probe Progress: %4d/%4d", rep+1, num_reps);
+    printf("\rL2 Prime+Probe Progress: %4d/%4d", rep+1, num_reps);
     fflush(stdout);
 
     scramble_and_clear_cache(cache_head, L2_WAYS, L2_SETS, buf);
