@@ -69,7 +69,7 @@ void wait_and_yield(const struct timespec *duration) {
 
 int main(int argc, char const *argv[]) {
   int verbose = 0; // Default value for verbose is 0
-  int printing_sum_cycle = 0; // Default value for printing_sum_cycle is 0
+  int printing_sum_cycle = 0; // Default value for printing is 0
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-v") == 0) {
       verbose = 1; // Set verbose to 1 if "-v" is found
