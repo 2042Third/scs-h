@@ -69,9 +69,13 @@ void wait_and_yield(const struct timespec *duration) {
 
 int main(int argc, char const *argv[]) {
   int verbose = 0; // Default value for verbose is 0
+  int printing_sum_cycle = 0; // Default value for printing_sum_cycle is 0
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-v") == 0) {
       verbose = 1; // Set verbose to 1 if "-v" is found
+    }
+    if (strcmp(argv[i], "-p") == 0) {
+      printing_sum_cycle = 1; // Set printing_sum_cycle to 1 if "-p" is found
     }
   }
   void *buf = NULL;
@@ -135,7 +139,10 @@ int main(int argc, char const *argv[]) {
   curr = cache_head;
   for (int i=0 ; i< L2_SETS ; i++) {
     if(verbose)
-      printf(" timing = %4d set %4d,%4d  avg %4d\n", sum_cycle[i],i,curr->setNum,sum_cycle[i]/num_reps);
+      printf(" timing = %4d set %4d  avg %4d\n", i,curr->setNum,sum_cycle[i]/num_reps);
+    if (printing_sum_cycle)
+      printf("%d, %d\n", i, sum_cycle[i]);
+
     if (sum_cycle[i]/num_reps>50) {
       uintptr_t address =curr->lineAddr; // Example address
       uintptr_t maskedAndShifted = (address >> 6) & 0x7FF;

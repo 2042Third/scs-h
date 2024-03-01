@@ -15,7 +15,7 @@
 
 #define SHARED_ID "CHANNEL"
 
-#define DEBUG 1
+//#define DEBUG 1
 
 #define BUF_LINES (4096 * 511)/64
 
