@@ -15,7 +15,7 @@
 
 #define SHARED_ID "CHANNEL"
 
-//#define DEBUG 1
+#define DEBUG 1
 
 #define BUF_LINES (4096 * 511)/64
 
@@ -62,7 +62,7 @@ int flush_reload(int size, uint8_t *buf) {
     busy_wait_cycles(1000); // 78 cycles is the average time to access a line in the cache by the vault
     timing=measure_line_access_time(lineAddr);
 #ifdef DEBUG
-    printf("%d, %d\n", i, timing);
+    printf("%d, %d\n", i*64, timing);
 #endif
     if (timing < min_timing) {
       min_timing = timing;
