@@ -105,7 +105,7 @@ int main(int argc, char const *argv[]) {
   printf("L2_WAYS = %d\n", L2_WAYS);
   printf("L2_SETS = %d\n", L2_SETS);
   printf("L2_LINE_SIZE = %d\n", L2_LINE_SIZE);
-  int num_reps = 100;
+  int num_reps = 10;
   for (int rep = 0; rep < num_reps; rep++) {
     printf("\rL2 Prime+Probe Progress: %4d/%4d", rep+1, num_reps);
     fflush(stdout);
