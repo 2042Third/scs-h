@@ -67,9 +67,23 @@ void wait_and_yield(const struct timespec *duration) {
 }
 
 
+
 int main(int argc, char const *argv[]) {
   int verbose = 0; // Default value for verbose is 0
   int printing_sum_cycle = 0; // Default value for printing is 0
+  int num_reps = 3; // Number of attack repetitions
+
+  // Check if no arguments are provided or "-h" is provided
+  if (argc == 1 || (argc == 2 && strcmp(argv[1], "-h") == 0)) {
+    printf("Usage: %s [options]\n", argv[0]);
+    printf("Options:\n");
+    printf("  -v                Enable verbose mode\n");
+    printf("  -p                Print the sum cycle\n");
+    printf("  -n <num_reps>     Specify the number of attack repetitions\n");
+    printf("  -h                Display this help message\n");
+    return 0;
+  }
+
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-v") == 0) {
       verbose = 1; // Set verbose to 1 if "-v" is found
@@ -77,7 +91,23 @@ int main(int argc, char const *argv[]) {
     if (strcmp(argv[i], "-p") == 0) {
       printing_sum_cycle = 1; // Set printing_sum_cycle to 1 if "-p" is found
     }
+    if (strcmp(argv[i], "-n") == 0) {
+      if (i + 1 < argc) {
+        char *endptr;
+        long value = strtol(argv[i + 1], &endptr, 10);
+        if (*endptr == '\0' && value > 0) {
+          num_reps = (int)value;
+          i++; // Skip the next argument since it's used as the value for -n
+        } else {
+          fprintf(stderr, "Invalid value for -n option. Using default value of %d.\n", num_reps);
+        }
+      } else {
+        fprintf(stderr, "Missing value for -n option. Using default value of %d.\n", num_reps);
+      }
+    }
   }
+
+
   void *buf = NULL;
   int buf_size = 1 << 21;
   if (posix_memalign(&buf, 1 << 21, buf_size)) { // Allocates 2MB aligned memory, begins at 0x200000
@@ -105,7 +135,6 @@ int main(int argc, char const *argv[]) {
   printf("L2_WAYS = %d\n", L2_WAYS);
   printf("L2_SETS = %d\n", L2_SETS);
   printf("L2_LINE_SIZE = %d\n", L2_LINE_SIZE);
-  int num_reps = 3;
   for (int rep = 0; rep < num_reps; rep++) {
     printf("\rL2 Prime+Probe Progress: %4d/%4d", rep+1, num_reps);
     fflush(stdout);
