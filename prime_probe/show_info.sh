@@ -18,4 +18,4 @@ for arg in "$@"; do
   process_entry "$arg"
 done
 
-cat info.txt | grep average
+cat out.txt | grep average
