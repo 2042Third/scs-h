@@ -4,7 +4,7 @@
 process_entry() {
   entry=$1
   echo "Processing entry: $entry"
-  cat out.txt | grep "$entry"
+  cat out.txt | grep -w "$entry"
 }
 
 # Check if any arguments are provided
