@@ -166,12 +166,13 @@ int main(int argc, char const *argv[]) {
   printf("\n");
 
   curr = cache_head;
+  unsigned long sets_sum = 0;
   for (int i=0 ; i< L2_SETS ; i++) {
     if(verbose)
       printf(" timing = %4d set %4d  avg %4d\n", i,curr->setNum,sum_cycle[i]/num_reps);
     if (printing_sum_cycle)
       printf("%d, %d\n", i, sum_cycle[i]);
-
+    sets_sum += sum_cycle[i];
     if (sum_cycle[i]/num_reps>50) {
       uintptr_t address =curr->lineAddr; // Example address
       uintptr_t maskedAndShifted = (address >> 6) & 0x7FF;
@@ -183,6 +184,9 @@ int main(int argc, char const *argv[]) {
       evict_count[i]++; // another eviction voting for average.
     }
     curr = curr->next;
+  }
+  if(verbose || printing_sum_cycle) {
+    printf("Sets average: %ld\n", sets_sum / L2_SETS);
   }
 
   free_cache(cache_head);
