@@ -3,7 +3,6 @@
 # Function to process each entry
 process_entry() {
   entry=$1
-  echo "Processing entry: $entry"
   cat out.txt | grep -w "$entry"
 }
 
